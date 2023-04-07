@@ -1,3 +1,5 @@
+import pygame
+import board
 def main():
     pass
 
