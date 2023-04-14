@@ -16,6 +16,7 @@ def main() -> None:
     pygame.display.set_caption("My game")
     clock = pygame.time.Clock()
     done = False
+    
     while done == False:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
