@@ -40,7 +40,7 @@ def main() -> None:
             quit = Button(screen, 200, 112.5, colors['bla'], 'QUIT')
             if quit.draw((700, 550)):
                 done = True
-            pygame.display.flip()
+        pygame.display.flip()
     pygame.quit()
 
 if __name__ == '__main__':

@@ -44,4 +44,3 @@ class Board:
         pg.draw.polygon(self.window,self.color['whi'],[(1002.5, 550), (1045, 900), (960, 900)],0)
         pg.draw.polygon(self.window,self.color['bla'],[(1097.5, 550), (1140, 900), (1055, 900)],0)
         pg.draw.polygon(self.window,self.color['whi'],[(1192.5, 550), (1235, 900), (1150, 900)],0)
-        pg.display.flip()
