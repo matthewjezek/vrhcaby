@@ -14,7 +14,6 @@ def main() -> None:
     }
     size = (1400,900)
     screen = pygame.display.set_mode(size)
-    pygame.display.set_caption("My game")
     clock = pygame.time.Clock()
     done = False
     game_started = False
@@ -28,6 +27,7 @@ def main() -> None:
 
         # vyvolání hrací plochy / menu
         if game_started:
+            pygame.display.set_caption("Vrhcaby")
             main_board = board.Board(screen, clock, colors, size)
             main_board.make_board()
             clock.tick(60)
