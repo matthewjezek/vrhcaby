@@ -1,18 +1,13 @@
 import pygame
 import board
 import dice
+import variables
 from menu import Button 
 pygame.init()
 
 def main() -> None:
-    colors = {
-        'board_color': (133,100,55),
-        'corners': (66,30,6),
-        'dark_corners': (42,19,4),
-        'whi': (255,255,255),
-        'bla': (0,0,0),
-    }
-    size = (1240,720)
+    size = variables.size
+    colors = variables.colors
     screen = pygame.display.set_mode(size)
     clock = pygame.time.Clock()
     done = False
