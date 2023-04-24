@@ -5,7 +5,7 @@ import variables
 from menu import Button 
 pygame.init()
 
-def main() -> None:
+def game_loop() -> None:
     size = variables.size
     colors = variables.colors
     screen = pygame.display.set_mode(size)
@@ -37,6 +37,3 @@ def main() -> None:
                 done = True
         pygame.display.flip()
     pygame.quit()
-
-if __name__ == '__main__':
-    main()
