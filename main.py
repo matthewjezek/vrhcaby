@@ -37,3 +37,4 @@ def game_loop() -> None:
                 done = True
         pygame.display.flip()
     pygame.quit()
+#přidat game_loop() pro spuštění
