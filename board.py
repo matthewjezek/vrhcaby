@@ -74,12 +74,3 @@ class Board:
         for place in self.history:
             print(f"{i}: {place}")
             i += 1
-
-board = Board()
-board.show_history()
-
-
-
-
-
-
