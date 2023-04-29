@@ -1,6 +1,3 @@
-# vrhcaby - Raw Logic
-inspirace, myšlenka základní struktury
-
 ## Způsob commitování:
 
 <code>git pull<br>

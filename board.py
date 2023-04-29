@@ -1,74 +1,73 @@
-class Place:
-    def __init__(self, stack):
-        self.stack = stack
-
-    def add_stone(self, stone):
-        self.stack.append(stone)
-
-    def remove_stone(self, stone):
-        self.stack.pop(stone)
-
-    def stack(self):
-        return self.stack
-
-    def move_stone(self, to_place):
-        to_place.add_stone(self.stack()[0])
-        self.remove_stone(self.stack()[0])
-
+import pygame as pg
+from variables import l, m, k, c, b, x, a, gap
 
 class Board:
-    def reset_stones(self):
-        # Vrcholy 1-12
-        global place_1, place_2, place_3, place_4, place_5, place_6, place_7, place_8, place_9, place_10, place_11, place_12
-        place_1 = Place(["W", "W"])
-        place_2 = Place([])
-        place_3 = Place([])
-        place_4 = Place([])
-        place_5 = Place([])
-        place_6 = Place(["K", "K", "K", "K", "K"])
-        place_7 = Place([])
-        place_8 = Place(["K", "K", "K"])
-        place_9 = Place([])
-        place_10 = Place([])
-        place_11 = Place([])
-        place_12 = Place(["W", "W", "W", "W", "W"])
-        # Vrcholy 13-24
-        global place_13, place_14, place_15, place_16, place_17, place_18, place_19, place_20, place_21, place_22, place_23, place_24
-        place_13 = Place(["K", "K", "K", "K", "K"])
-        place_14 = Place([])
-        place_15 = Place([])
-        place_16 = Place([])
-        place_17 = Place(["W", "W", "W"])
-        place_18 = Place([])
-        place_19 = Place(["W", "W", "W", "W", "W"])
-        place_20 = Place([])
-        place_21 = Place([])
-        place_22 = Place([])
-        place_23 = Place([])
-        place_24 = Place(["K", "K"])
+    def __init__(self, window: pg.display, clock, color, size) -> None:
+        self.window = window
+        self.clock = clock
+        self.color = color
+        self.size = size
+        # inicializace desky na počáteční nastavení
+        self.board = [-2, 0, 0, 0, 0, 5, 0, 3, 0, 0, -5, 2,
+                       5, -3, 0, 0, -5, 0, 0, 0, 0, 2, 0, -5]
+        self.player_bar = 0 # počet kamenů hráče na baru
+        self.player_off = 0 # počet kamenů hráče mimo desku
+        self.opponent_bar = 0 # počet kamenů soupeře na baru
+        self.opponent_off = 0 # počet kamenů soupeře mimo desku
 
-    def make_object_list(self):
-        stacks = [place_1.stack, place_2.stack, place_3.stack, place_4.stack, place_5.stack, place_6.stack,
-                  place_7.stack, place_8.stack, place_9.stack, place_10.stack, place_11.stack, place_12.stack,
-                  place_13.stack, place_14.stack, place_15.stack, place_16.stack, place_17.stack, place_18.stack,
-                  place_19.stack, place_20.stack, place_21.stack, place_22.stack, place_23.stack, place_24.stack]
-        return stacks
-    def __init__(self):
-        self.reset_stones()
-        self.history = []
-        self.history.append(self.make_object_list())
+    def make_board(self) -> None:
+        self.window.fill(self.color['board_color'])
+        #krajní linie
+        pg.draw.line(self.window,self.color['corners'],((15.65*l),0),((15.65*l),self.size[1]),int(36*m))
+        pg.draw.line(self.window,self.color['corners'],(0,0),(0,self.size[1]),30)
+        pg.draw.polygon(self.window,self.color['corners'],[(l*31,0),(self.size[0],0),(self.size[0],self.size[1]),(l*31,self.size[1])],0)
+        #domečky
+        pg.draw.polygon(self.window, self.color['dark_corners'], [(l*32,2*k), (l*34,2*k), (l*34,7*k), (l*32,7*k)],0)
+        pg.draw.polygon(self.window, self.color['dark_corners'], [(l*32,11*k), (l*34,11*k), (l*34,16*k), (l*32,16*k)],0)
+        #triangle horní levé
+        pg.draw.polygon(self.window,self.color['whi'],[(c, 7*k), (b, 0), (a, 0)],0)
+        pg.draw.polygon(self.window,self.color['bla'],[(c+x, 7*k), (b+x, 0), (a+x, 0)],0)
+        pg.draw.polygon(self.window,self.color['whi'],[(c+(2*x), 7*k), (b+(2*x), 0), (a+(2*x), 0)],0)
+        pg.draw.polygon(self.window,self.color['bla'],[(c+(3*x), 7*k), (b+(3*x), 0), (a+(3*x), 0)],0)
+        pg.draw.polygon(self.window,self.color['whi'],[(c+(4*x), 7*k), (b+(4*x), 0), (a+(4*x), 0)],0)
+        pg.draw.polygon(self.window,self.color['bla'],[(c+(5*x), 7*k), (b+(5*x), 0), (a+(5*x), 0)],0)
+        #triangle dolní levé
+        pg.draw.polygon(self.window,self.color['bla'],[(c, 11*k), (b, self.size[1]), (a, self.size[1])],0)
+        pg.draw.polygon(self.window,self.color['whi'],[(c+x, 11*k), (b+x, self.size[1]), (a+x, self.size[1])],0)
+        pg.draw.polygon(self.window,self.color['bla'],[(c+(2*x), 11*k), (b+(2*x), self.size[1]), (a+(2*x), self.size[1])],0)
+        pg.draw.polygon(self.window,self.color['whi'],[(c+(3*x), 11*k), (b+(3*x), self.size[1]), (a+(3*x), self.size[1])],0)
+        pg.draw.polygon(self.window,self.color['bla'],[(c+(4*x), 11*k), (b+(4*x), self.size[1]), (a+(4*x), self.size[1])],0)
+        pg.draw.polygon(self.window,self.color['whi'],[(c+(5*x), 11*k), (b+(5*x), self.size[1]), (a+(5*x), self.size[1])],0)
+        #triangle horní pravé
+        pg.draw.polygon(self.window,self.color['whi'],[(c+gap+(5*x), 7*k), (b+gap+(5*x), 0), (a+gap+(5*x), 0)],0)
+        pg.draw.polygon(self.window,self.color['bla'],[(c+gap+(6*x), 7*k), (b+gap+(6*x), 0), (a+gap+(6*x), 0)],0)
+        pg.draw.polygon(self.window,self.color['whi'],[(c+gap+(7*x), 7*k), (b+gap+(7*x), 0), (a+gap+(7*x), 0)],0)
+        pg.draw.polygon(self.window,self.color['bla'],[(c+gap+(8*x), 7*k), (b+gap+(8*x), 0), (a+gap+(8*x), 0)],0)
+        pg.draw.polygon(self.window,self.color['whi'],[(c+gap+(9*x), 7*k), (b+gap+(9*x), 0), (a+gap+(9*x), 0)],0)
+        pg.draw.polygon(self.window,self.color['bla'],[(c+gap+(10*x), 7*k), (b+gap+(10*x), 0), (a+gap+(10*x), 0)],0)
+        #triangle dolní pravé
+        pg.draw.polygon(self.window,self.color['bla'],[(c+gap+(5*x), 11*k), (b+gap+(5*x), self.size[1]), (a+gap+(5*x), self.size[1])],0)
+        pg.draw.polygon(self.window,self.color['whi'],[(c+gap+(6*x), 11*k), (b+gap+(6*x), self.size[1]), (a+gap+(6*x), self.size[1])],0)
+        pg.draw.polygon(self.window,self.color['bla'],[(c+gap+(7*x), 11*k), (b+gap+(7*x), self.size[1]), (a+gap+(7*x), self.size[1])],0)
+        pg.draw.polygon(self.window,self.color['whi'],[(c+gap+(8*x), 11*k), (b+gap+(8*x), self.size[1]), (a+gap+(8*x), self.size[1])],0)
+        pg.draw.polygon(self.window,self.color['bla'],[(c+gap+(9*x), 11*k), (b+gap+(9*x), self.size[1]), (a+gap+(9*x), self.size[1])],0)
+        pg.draw.polygon(self.window,self.color['whi'],[(c+gap+(10*x), 11*k), (b+gap+(10*x), self.size[1]), (a+gap+(10*x), self.size[1])],0)
+        pg.display.flip()
 
-    def save_to_history(self):
-        self.history.append(self.make_object_list())
+    def is_valid_move(self, move):
+        # vrátí True, pokud je tah platný podle pravidel hry, jinak False
+        # tady bude logika pro kontrolu platnosti tahu
+        return True
+    def make_move(self, move):
+        # provede tah na desce a aktualizuje počty kamenů na baru a mimo desku
+        # zde bude logika pro provedení tahů podle barvy hráče a soupeře
+        pass
 
-    def show(self):
-        i = 1
-        for place in self.make_object_list():
-            print(f"{i}: {place}")
-            i += 1
-
-    def show_history(self):
-        i = 0
-        for place in self.history:
-            print(f"{i}: {place}")
-            i += 1
+    def evaluate_winner(self):
+        # vyhodnotí vítěze hry podle počtu kamenů mimo desku
+        if self.player_off == 15:  # pokud má hráč všechny kameny mimo desku, vyhrál
+            return "player"
+        elif self.opponent_off == 15:  # pokud má soupeř všechny kameny mimo desku, vyhrál
+            return "opponent"
+        else:  # jinak ještě není rozhodnuto
+            return None
