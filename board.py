@@ -6,6 +6,13 @@ class Board:
         self.clock = clock
         self.color = color
         self.size = size
+        # inicializace desky na počáteční nastavení
+        self.board = [-2, 0, 0, 0, 0, 5, 0, 3, 0, 0, -5, 2,
+                       5, -3, 0, 0, -5, 0, 0, 0, 0, 2, 0, -5]
+        self.player_bar = 0 # počet kamenů hráče na baru
+        self.player_off = 0 # počet kamenů hráče mimo desku
+        self.opponent_bar = 0 # počet kamenů soupeře na baru
+        self.opponent_off = 0 # počet kamenů soupeře mimo desku
 
     def make_board(self) -> None:
         k = (self.size[1]/18) # výška / 18
@@ -53,3 +60,21 @@ class Board:
         pg.draw.polygon(self.window,self.color['bla'],[(c+gap+(9*x), 11*k), (b+gap+(9*x), self.size[1]), (a+gap+(9*x), self.size[1])],0)
         pg.draw.polygon(self.window,self.color['whi'],[(c+gap+(10*x), 11*k), (b+gap+(10*x), self.size[1]), (a+gap+(10*x), self.size[1])],0)
         pg.display.flip()
+
+    def is_valid_move(self, move):
+        # vrátí True, pokud je tah platný podle pravidel hry, jinak False
+        # tady bude logika pro kontrolu platnosti tahu
+        return True
+    def make_move(self, move):
+        # provede tah na desce a aktualizuje počty kamenů na baru a mimo desku
+        # zde bude logika pro provedení tahů podle barvy hráče a soupeře
+        pass
+
+    def evaluate_winner(self):
+        # vyhodnotí vítěze hry podle počtu kamenů mimo desku
+        if self.player_off == 15:  # pokud má hráč všechny kameny mimo desku, vyhrál
+            return "player"
+        elif self.opponent_off == 15:  # pokud má soupeř všechny kameny mimo desku, vyhrál
+            return "opponent"
+        else:  # jinak ještě není rozhodnuto
+            return None
