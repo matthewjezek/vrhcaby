@@ -3,12 +3,12 @@ from typing import Iterator
 import pygame as pg
 import os
 
-side_1 = pg.image.load(os.path.join("Side_1_Pip.png"))
-side_2 = pg.image.load(os.path.join("Side_2_Pips.png"))
-side_3 = pg.image.load(os.path.join("Side_3_Pips.png"))
-side_4 = pg.image.load(os.path.join("Side_4_Pips.png"))
-side_5 = pg.image.load(os.path.join("Side_5_Pips.png"))
-side_6 = pg.image.load(os.path.join("Side_6_Pips.png"))
+side_1 = pg.image.load(os.path.join("IMG/Side_1_Pip.png"))
+side_2 = pg.image.load(os.path.join("IMG/Side_2_Pips.png"))
+side_3 = pg.image.load(os.path.join("IMG/Side_3_Pips.png"))
+side_4 = pg.image.load(os.path.join("IMG/Side_4_Pips.png"))
+side_5 = pg.image.load(os.path.join("IMG/Side_5_Pips.png"))
+side_6 = pg.image.load(os.path.join("IMG/Side_6_Pips.png"))
 
 class Dice:
     def __init__(self, sides=6) -> None:
