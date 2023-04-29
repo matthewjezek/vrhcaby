@@ -1,4 +1,5 @@
 import pygame as pg
+from variables import l, m, k, c, b, x, a, gap
 
 class Board:
     def __init__(self, window: pg.display, clock, color, size) -> None:
@@ -15,14 +16,6 @@ class Board:
         self.opponent_off = 0 # počet kamenů soupeře mimo desku
 
     def make_board(self) -> None:
-        k = (self.size[1]/18) # výška / 18
-        l = (self.size[0]/35) # šířka / 35
-        m = (self.size[0]/560) # šířka / 560
-        x = (38*m) # vzdálenost mezi dvěma sousedními středovými vrcholy trojúhelníků
-        gap = ((x*2)-10) # vzdálenost vždy mezi dvěma trojúhelníky na stejné pozici ale na druhé straně baru
-        a = (0.5*l) # základní souřadnice šířky pravého vrcholu trojúhelníků
-        b = (40*m) # základní souřadnice šířky levého vrcholu trojůhelníků
-        c = (25*m) # základní souřadnice šířky středového vrcholu trojúhelníků
         self.window.fill(self.color['board_color'])
         #krajní linie
         pg.draw.line(self.window,self.color['corners'],((15.65*l),0),((15.65*l),self.size[1]),int(36*m))
