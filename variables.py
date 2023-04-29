@@ -4,6 +4,7 @@ colors = {
         'dark_corners': (42,19,4),
         'whi': (255,255,255),
         'bla': (0,0,0),
+        'outline_color': (55, 55, 55),
 }
 size = (1400,900)
 k = (size[1]/18) # výška / 18
