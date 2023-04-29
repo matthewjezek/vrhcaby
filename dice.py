@@ -1,6 +1,5 @@
 import random
 from typing import Iterator
-from numpy import roll
 import pygame as pg
 import os
 
