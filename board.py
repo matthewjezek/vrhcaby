@@ -57,14 +57,18 @@ class Board:
         self.reset_stones()
         self.history = []
         self.history.append(self.make_stacks_list())
+        self.bar_W = []
+        self.bar_K = []
+        self.off_W = []
+        self.off_K = []
 
     def save_to_history(self):
         self.history.append(self.make_stacks_list())
 
     def check_options(self, color, dice):
         options = []
-        place_index = 1
         if color == "W":
+            place_index = 1
             for place in self.make_stacks_list():
                 if "W" in place:
                     for number in dice.generate_moves():
@@ -77,26 +81,51 @@ class Board:
                         else:
                             options.append([place_index, "OFF", number, "END"])
                 place_index += 1
+        elif color == "K":
+            place_index = 24
+            for _ in range(0, 24):
+                place = self.make_stacks_list()[place_index-1]
+                if "K" in place:
+                    for number in dice.generate_moves():
+                        if (place_index - number) >= 0:
+                            if "W" not in self.make_stacks_list()[place_index - number -1]:
+                                options.append([place_index, place_index - number, number, "move"])
+                            elif self.make_stacks_list()[place_index - number -1] == ["K"]:
+                                options.append([place_index, place_index - number, number, "KILL"])
+
+                        else:
+                            options.append([place_index, "OFF", number, "END"])
+
+                place_index -= 1
+
         print(dice.generate_moves())
         for option in options:
             print(f"{option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
     def move_stone(self, from_place, to_place):
-        to_place.add_stone(from_place.stack[0])
+        if to_place == "OFF" and from_place.stack[0] == "W":
+            self.off_W.append("W")
+        elif to_place == "OFF" and from_place.stack[0] == "K":
+            self.off_K.append("K")
+        elif to_place == "BAR" and from_place.stack[0] == "W":
+            self.bar_W.append("W")
+        elif to_place == "BAR" and from_place.stack[0] == "K":
+            self.bar_W.append("K")
+        else:
+            to_place.add_stone(from_place.stack[0])
         from_place.remove_stone()
         self.save_to_history()
 
     def show(self, board):
-        # i = 1
-        # for place in self.make_stacks_list():
-        #     print(f"{i}: {place}")
-        #     i += 1
-
-        print("")
+        print(f"\nWhite BAR: {self.bar_W}")
+        print("---------------------------------------")
         print("| 12 11 10  9  8  7  6  5  4  3  2  1 |")
-        print("|-------------------------------------|")
+        print(f"|-------------------------------------| Black END: {self.off_K}")
         board_layers.layers(board)
-        print("|-------------------------------------|")
+        print(f"|-------------------------------------| White END: {self.off_W}")
         print("| 13 14 15 16 17 18 19 20 21 22 23 24 |")
+        print("---------------------------------------")
+        print(f"Black BAR: {self.bar_K}\n")
+
     def show_history(self):
         i = 0
         for place in self.history:
