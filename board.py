@@ -6,10 +6,7 @@ class Place:
         self.stack.append(stone)
 
     def remove_stone(self):
-        self.stack.pop(1)
-
-    def stack(self):
-        return self.stack
+        self.stack.pop(len(self.stack)-1)
 
     def move_stone(self, to_place):
         to_place.add_stone(self.stack[0])
