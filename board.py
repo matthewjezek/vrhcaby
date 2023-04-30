@@ -1,3 +1,5 @@
+import board_layers
+
 class Place:
     def __init__(self, stack):
         self.stack = stack
@@ -83,12 +85,18 @@ class Board:
         from_place.remove_stone()
         self.save_to_history()
 
-    def show(self):
-        i = 1
-        for place in self.make_stacks_list():
-            print(f"{i}: {place}")
-            i += 1
+    def show(self, board):
+        # i = 1
+        # for place in self.make_stacks_list():
+        #     print(f"{i}: {place}")
+        #     i += 1
 
+        print("")
+        print("| 12 11 10  9  8  7  6  5  4  3  2  1 |")
+        print("|-------------------------------------|")
+        board_layers.layers(board)
+        print("|-------------------------------------|")
+        print("| 13 14 15 16 17 18 19 20 21 22 23 24 |")
     def show_history(self):
         i = 0
         for place in self.history:
