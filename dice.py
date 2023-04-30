@@ -17,10 +17,8 @@ class Dice:
 
     def generate_moves(self):
         # vygeneruje možné tahy podle hodnot kostek
-        moves = []
         if self.dice1 == self.dice2: # pokud kostky jsou stejné, můžeš hrát čtyřikrát
-            moves.append((self.dice1, self.dice1, self.dice1, self.dice1))
+            moves = [self.dice1, self.dice1 * 2, self.dice1 * 3, self.dice1 * 4]
         else: # jinak můžeš hrát dvakrát
-            moves.append((self.dice1, self.dice2))
-            moves.append((self.dice2, self.dice1))
+            moves = [self.dice1, self.dice2, self.dice1 + self.dice2]
         return moves

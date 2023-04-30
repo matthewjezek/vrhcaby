@@ -59,6 +59,21 @@ class Board:
     def save_to_history(self):
         self.history.append(self.make_stacks_list())
 
+    def check_options(self, color, dice):
+        options = []
+        place_index = 1
+        if color == "W":
+            for place in self.make_stacks_list():
+                if "W" in place:
+                    for number in dice.generate_moves():
+                        if (place_index + number) <= 24:
+                            if "K" not in self.make_stacks_list()[place_index + number -1]:
+                                options.append(f"{place_index} -> {place_index + number}, {number}")
+                        else:
+                            options.append(f"{place_index} -> OFF, {number}")
+                place_index += 1
+        for option in options:
+            print(option)
     def move_stone(self, from_place, to_place):
         to_place.add_stone(from_place.stack[0])
         from_place.remove_stone()
