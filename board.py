@@ -8,10 +8,6 @@ class Place:
     def remove_stone(self):
         self.stack.pop(len(self.stack)-1)
 
-    def move_stone(self, to_place):
-        to_place.add_stone(self.stack[0])
-        self.remove_stone()
-
 
 class Board:
     def reset_stones(self):
@@ -44,10 +40,10 @@ class Board:
         place_23 = Place([])
         place_24 = Place(["K", "K"])
 
-    def make_objects_list(self): # nastaví seznam objektů vrcholů od jedné
-        board = ["None", place_1, place_2, place_3, place_4, place_5, place_6, place_7, place_8, place_9, place_10, place_11, place_12,
+    def make_objects_list(self): # nastaví seznamu objektů vrcholů od jedné
+        stones = ["None", place_1, place_2, place_3, place_4, place_5, place_6, place_7, place_8, place_9, place_10, place_11, place_12,
                  place_13, place_14, place_15, place_16, place_17, place_18, place_19, place_20, place_21, place_22, place_23, place_24]
-        return board
+        return stones
 
     def make_stacks_list(self):
         stacks = [place_1.stack, place_2.stack, place_3.stack, place_4.stack, place_5.stack, place_6.stack,
@@ -62,6 +58,11 @@ class Board:
 
     def save_to_history(self):
         self.history.append(self.make_stacks_list())
+
+    def move_stone(self, from_place, to_place):
+        to_place.add_stone(from_place.stack[0])
+        from_place.remove_stone()
+        self.save_to_history()
 
     def show(self):
         i = 1
