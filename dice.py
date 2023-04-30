@@ -9,7 +9,10 @@ class Dice:
     def roll(self):
         self.dice1 = random.randint(1, 6)
         self.dice2 = random.randint(1, 6)
-
+        if self.dice1 != self.dice2:
+            self.sum = self.dice1 + self.dice2
+        else:
+            self.sum = 4 * self.dice1
     def show(self):
         if self.dice1 == self.dice2:
             print(f"┌───┐ ┌───┐ ┌───┐ ┌───┐")

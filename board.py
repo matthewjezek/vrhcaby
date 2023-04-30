@@ -57,6 +57,7 @@ class Board:
         self.reset_stones()
         self.history = []
         self.history.append(self.make_stacks_list())
+        self.options = []
         self.bar_W = []
         self.bar_K = []
         self.off_W = []
@@ -97,10 +98,14 @@ class Board:
                             options.append([place_index, "OFF", number, "END"])
 
                 place_index -= 1
-
+        self.options = options
+        num = 1
+        print("OPTIONS:")
         print(dice.generate_moves())
         for option in options:
-            print(f"{option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
+            print(f"{num}:   {option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
+            num += 1
+
     def move_stone(self, from_place, to_place):
         if to_place == "OFF" and from_place.stack[0] == "W":
             self.off_W.append("W")
