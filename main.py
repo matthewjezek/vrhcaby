@@ -10,3 +10,6 @@ human = player.Player("You", "W", "human")
 
 
 board.show(board)
+dice.roll()
+dice.show()
+board.check_options("W", dice)
