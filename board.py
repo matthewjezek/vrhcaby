@@ -68,12 +68,16 @@ class Board:
                     for number in dice.generate_moves():
                         if (place_index + number) <= 24:
                             if "K" not in self.make_stacks_list()[place_index + number -1]:
-                                options.append(f"{place_index} -> {place_index + number}, {number}")
+                                options.append([place_index, place_index + number, number, "move"])
+                            elif self.make_stacks_list()[place_index + number -1] == ["K"]:
+                                options.append([place_index, place_index + number, number, "KILL"])
+
                         else:
-                            options.append(f"{place_index} -> OFF, {number}")
+                            options.append([place_index, "OFF", number, "END"])
                 place_index += 1
+        print(dice.generate_moves())
         for option in options:
-            print(option)
+            print(f"{option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
     def move_stone(self, from_place, to_place):
         to_place.add_stone(from_place.stack[0])
         from_place.remove_stone()
