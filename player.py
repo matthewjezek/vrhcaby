@@ -4,5 +4,8 @@ class Player:
         self.color = color
         self.type = type
 
+    def generate_options(self):
+        # vygeneruje všechny možnosti tahů
+        pass
 
 
