@@ -12,8 +12,8 @@ def layers(board):
                 layer += "   "
             i -= 1
         print(f"|{layer}|")
-    k = max_num - 1
-    for _ in range(1, max_num):
+    k = max_num
+    for _ in range(1, max_num + 1):
         layer = " "
         for l in range(12, 24):
             place = board.make_stacks_list()[l]
