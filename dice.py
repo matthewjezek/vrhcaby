@@ -11,9 +11,14 @@ class Dice:
         self.dice2 = random.randint(1, 6)
 
     def show(self):
-        print(f"┌───┐ ┌───┐")
-        print(f"│ {self.dice1} │ │ {self.dice2} │")
-        print(f"└───┘ └───┘")
+        if self.dice1 == self.dice2:
+            print(f"┌───┐ ┌───┐ ┌───┐ ┌───┐")
+            print(f"│ {self.dice1} │ │ {self.dice2} │ │ {self.dice1} │ │ {self.dice2} │")
+            print(f"└───┘ └───┘ └───┘ └───┘")
+        else:
+            print(f"┌───┐ ┌───┐")
+            print(f"│ {self.dice1} │ │ {self.dice2} │")
+            print(f"└───┘ └───┘")
 
     def generate_moves(self):
         # vygeneruje možné tahy podle hodnot kostek
