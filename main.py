@@ -20,7 +20,7 @@ while True:
     sleep(1)
     while True:
         # player choose
-        dice.roll()
+        dice.roll(human)
         while board.check_move(human):
             clear()
             board.show(board)
@@ -33,7 +33,9 @@ while True:
             sleep(2)
             board.move_stone(move[0], move[1])
         # AI choose
-        dice.roll()
+        if board.check_win():
+            break
+        dice.roll(AI)
         while board.check_move(AI):
             clear()
             board.show(board)
@@ -45,7 +47,22 @@ while True:
             move = AI.player_move()
             sleep(2)
             board.move_stone(move[0], move[1])
-
+        if board.check_win():
+            break
+    if board.off_W == 15:
+        if human.color == "W":
+            winner = human.name
+        else:
+            winner = AI.name
+    elif board.off_K == 15:
+        if human.color == "K":
+            winner = human.name
+        else:
+            winner = AI.name
+    if board.check_win():
+        clear()
+        board.show(board)
+        print(f"{winner} won!")
 
 
 

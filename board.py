@@ -153,3 +153,9 @@ class Board:
         for place in self.history:
             print(f"{i}: {place}")
             i += 1
+
+    def check_win(self):
+        if len(self.off_W) == 15:
+            return True
+        elif len(self.off_K) == 15:
+            return True

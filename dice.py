@@ -11,7 +11,7 @@ class Dice:
         self.dices = []
         self.clone = False
 
-    def roll(self):
+    def roll(self, player):
         self.dice1 = random.randint(1, 6)
         self.dice2 = random.randint(1, 6)
         if self.dice1 == self.dice2:
@@ -19,6 +19,7 @@ class Dice:
             self.dice3 = self.dice1
             self.dice4 = self.dice1
         self.dices = [self.dice1, self.dice2, self.dice3, self.dice4]
+        player.dice_chooses = []
 
     def show(self, player):
         moves = ""
