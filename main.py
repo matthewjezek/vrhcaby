@@ -32,8 +32,8 @@ while True:
             move = human.player_move()
             sleep(2)
             if move[3] == "KILL":
-                board.move_stone(move[1], "BAR")
-            board.move_stone(move[0], move[1])
+                board.move_stone(move[1], "BAR", human)
+            board.move_stone(move[0], move[1], human)
         # AI choose
         if board.check_win():
             break
@@ -47,8 +47,10 @@ while True:
             board.check_options(AI)
             sleep(1)
             move = AI.player_move()
-            sleep(2)
-            board.move_stone(move[0], move[1])
+            sleep(3)
+            if move[3] == "KILL":
+                board.move_stone(move[1], "BAR", AI)
+            board.move_stone(move[0], move[1], AI)
         if board.check_win():
             break
     if board.off_W == 15:
