@@ -91,7 +91,7 @@ class Board:
                 place = self.make_stacks_list()[place_index-1]
                 if "K" in place:
                     for number in player.moves:
-                        if (place_index - number) >= 0:
+                        if (place_index - number) >= 1:
                             if "W" not in self.make_stacks_list()[place_index - number -1]:
                                 options.append([place_index, place_index - number, number, "move"])
                             elif self.make_stacks_list()[place_index - number -1] == ["K"]:
