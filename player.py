@@ -71,7 +71,7 @@ class Player:
         elif move[2] == (self.dice.dice3 + self.dice.dice4) and (self.dice.dice3 != 0 or self.dice.dice4 != 0):
             self.dice.dice3 = 0
             self.dice.dice4 = 0
-        print(f"{self.type} choose: {option}: {move[0]} -> {move[1]}, [{move[2]}]")
+        print(f"{self.name} choose: {option}: {move[0]} -> {move[1]}, [{move[2]}]")
         return move
 
     def menu(self):

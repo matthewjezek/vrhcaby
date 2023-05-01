@@ -128,7 +128,7 @@ class Board:
                 print(f"{num}:   {option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
                 num += 1
             print("-----------------------------------------------")
-            
+
     def check_move(self, player):
             self.check_options(player)
             if self.options != []:
@@ -173,7 +173,7 @@ class Board:
             i += 1
 
     def check_win(self):
-        if len(self.off_W) == 15:
+        if len(self.off_W) == 15 or len(self.off_K) == 15:
             return True
-        elif len(self.off_K) == 15:
-            return True
+        else:
+            return False
