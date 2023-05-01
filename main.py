@@ -20,9 +20,8 @@ while True:
     sleep(1)
     while True:
         # player choose
-        clear()
         dice.roll()
-        while True:
+        while board.check_move(human):
             clear()
             board.show(board)
             sleep(1)
@@ -33,6 +32,20 @@ while True:
             move = human.player_move()
             sleep(2)
             board.move_stone(move[0], move[1])
+        # AI choose
+        dice.roll()
+        while board.check_move(AI):
+            clear()
+            board.show(board)
+            sleep(1)
+            print("AI move!")
+            dice.show(AI)
+            board.check_options(AI)
+            sleep(1)
+            move = AI.player_move()
+            sleep(2)
+            board.move_stone(move[0], move[1])
+
 
 
 

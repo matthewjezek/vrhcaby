@@ -57,7 +57,7 @@ class Board:
         self.reset_stones()
         self.history = []
         self.history.append(self.make_stacks_list())
-        self.options = []
+        self.options = [""]
         self.bar_W = []
         self.bar_K = []
         self.off_W = []
@@ -102,16 +102,26 @@ class Board:
 
                 place_index -= 1
         self.options = options
-        num = 1
-        print(f"OPTIONS for {player.color}:")
-        moves = ""
-        for move in player.moves:
-            moves += ("[" + str(move) + "],")
-        moves[:-1]
-        print(f"Available move numbers [x]: {moves}")
-        for option in self.options:
-            print(f"{num}:   {option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
-            num += 1
+        if self.options == []:
+            pass
+        else:
+            num = 1
+            print(f"OPTIONS for {player.color}:")
+            moves = ""
+            for move in player.moves:
+                moves += ("[" + str(move) + "],")
+            moves[:-1]
+            print(f"Available move numbers [x]: {moves}")
+            for option in self.options:
+                print(f"{num}:   {option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
+                num += 1
+
+    def check_move(self, player):
+            self.check_options(player)
+            if self.options != []:
+                return True
+            else:
+                return False
 
     def move_stone(self, from_place, to_place):
         if to_place == "OFF" and self.board_list[from_place].stack[0] == "W":
