@@ -98,7 +98,7 @@ class Board:
                     if "W" not in self.make_stacks_list()[24 - number -1]:
                         options.append(["BAR", 25 - number, number, "move"])
                     elif self.make_stacks_list()[24 - number -1] == ["W"]:
-                        options.append(["BAR",25 - number, number, "KILL"])
+                        options.append(["BAR", 25 - number, number, "KILL"])
             for _ in range(0, 24):
                 place = self.make_stacks_list()[place_index-1]
                 if "K" in place:
