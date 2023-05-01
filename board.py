@@ -53,7 +53,7 @@ class Board:
                   place_13.stack, place_14.stack, place_15.stack, place_16.stack, place_17.stack, place_18.stack,
                   place_19.stack, place_20.stack, place_21.stack, place_22.stack, place_23.stack, place_24.stack]
         return stacks
-    def __init__(self):
+    def __init__(self, dice):
         self.reset_stones()
         self.history = []
         self.history.append(self.make_stacks_list())
@@ -62,17 +62,20 @@ class Board:
         self.bar_K = []
         self.off_W = []
         self.off_K = []
+        self.board_list = self.make_objects_list()
+        self.dice = dice
 
     def save_to_history(self):
         self.history.append(self.make_stacks_list())
 
-    def check_options(self, color, dice):
+    def check_options(self, player):
         options = []
-        if color == "W":
+        player.generate_moves()
+        if player.color == "W":
             place_index = 1
             for place in self.make_stacks_list():
                 if "W" in place:
-                    for number in dice.generate_moves():
+                    for number in player.moves:
                         if (place_index + number) <= 24:
                             if "K" not in self.make_stacks_list()[place_index + number -1]:
                                 options.append([place_index, place_index + number, number, "move"])
@@ -82,12 +85,12 @@ class Board:
                         else:
                             options.append([place_index, "OFF", number, "END"])
                 place_index += 1
-        elif color == "K":
+        elif player.color == "K":
             place_index = 24
             for _ in range(0, 24):
                 place = self.make_stacks_list()[place_index-1]
                 if "K" in place:
-                    for number in dice.generate_moves():
+                    for number in player.moves:
                         if (place_index - number) >= 0:
                             if "W" not in self.make_stacks_list()[place_index - number -1]:
                                 options.append([place_index, place_index - number, number, "move"])
@@ -100,24 +103,28 @@ class Board:
                 place_index -= 1
         self.options = options
         num = 1
-        print("OPTIONS:")
-        print(dice.generate_moves())
-        for option in options:
+        print(f"OPTIONS for {player.color}:")
+        moves = ""
+        for move in player.moves:
+            moves += ("[" + str(move) + "],")
+        moves[:-1]
+        print(f"Available move numbers [x]: {moves}")
+        for option in self.options:
             print(f"{num}:   {option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
             num += 1
 
     def move_stone(self, from_place, to_place):
-        if to_place == "OFF" and from_place.stack[0] == "W":
+        if to_place == "OFF" and self.board_list[from_place].stack[0] == "W":
             self.off_W.append("W")
-        elif to_place == "OFF" and from_place.stack[0] == "K":
+        elif to_place == "OFF" and self.board_list[from_place].stack[0] == "K":
             self.off_K.append("K")
-        elif to_place == "BAR" and from_place.stack[0] == "W":
+        elif to_place == "BAR" and self.board_list[from_place].stack[0] == "W":
             self.bar_W.append("W")
-        elif to_place == "BAR" and from_place.stack[0] == "K":
+        elif to_place == "BAR" and self.board_list[from_place].stack[0] == "K":
             self.bar_W.append("K")
         else:
-            to_place.add_stone(from_place.stack[0])
-        from_place.remove_stone()
+            self.board_list[to_place].add_stone(self.board_list[from_place].stack[0])
+        self.board_list[from_place].remove_stone()
         self.save_to_history()
 
     def show(self, board):

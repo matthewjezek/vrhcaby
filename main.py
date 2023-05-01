@@ -4,12 +4,10 @@ import board
 import dice
 import player
 
-
-board = board.Board()
-board_list = board.make_objects_list()
 dice = dice.Dice()
-AI = player.Player("AI", "K", "AI")
-human = player.Player("You", "W", "human")
+board = board.Board(dice)
+AI = player.Player("AI", "K", "AI", board, dice)
+human = player.Player("You", "W", "human", board, dice)
 
 while True:
     clear()
@@ -20,7 +18,22 @@ while True:
     elif menu == 2:
         break
     sleep(1)
-    clear()
-    board.show(board)
-    sleep(2)
+    while True:
+        # player choose
+        clear()
+        dice.roll()
+        while True:
+            clear()
+            board.show(board)
+            sleep(1)
+            print("Player move!")
+            dice.show(human)
+            board.check_options(human)
+            sleep(1)
+            move = human.player_move()
+            sleep(2)
+            board.move_stone(move[0], move[1])
+
+
+
 

@@ -1,7 +1,10 @@
 
 def layers(board):
-    max_num = len(max(board.make_stacks_list()))
-    for j in range(1, max_num + 2):
+    if len(max(board.make_stacks_list())) >= 5:
+        max_num = len(max(board.make_stacks_list()))
+    else:
+        max_num = 5
+    for j in range(1, max_num + 1):
         layer = " "
         i = 11
         for _ in range(0, 12):
@@ -12,6 +15,7 @@ def layers(board):
                 layer += "   "
             i -= 1
         print(f"|{layer}|")
+    print("|                                     |")
     k = max_num
     for _ in range(1, max_num + 1):
         layer = " "
