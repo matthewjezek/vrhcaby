@@ -25,10 +25,9 @@ class Dice:
         moves = ""
         for move in player.dice_chooses:
             moves += ("[" + str(move) + "],")
-        moves[:-1]
         if self.dice1 == self.dice2:
             print(f"┌───┐ ┌───┐ ┌───┐ ┌───┐")
-            print(f"│ {self.dices[0]} │ │ {self.dices[1]} │ │ {self.dices[2]} │ │ {self.dices[3]} │  Used move numbers [x]: {moves}")
+            print(f"│ {self.dices[0]} │ │ {self.dices[1]} │ │ {self.dices[2]} │ │ {self.dices[3]} │  Used move numbers [x]: {moves[:-1]}")
             print(f"└───┘ └───┘ └───┘ └───┘")
         else:
             print(f"┌───┐ ┌───┐")

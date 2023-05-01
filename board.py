@@ -122,12 +122,13 @@ class Board:
             moves = ""
             for move in player.moves:
                 moves += ("[" + str(move) + "],")
-            moves[:-1]
-            print(f"Available move numbers [x]: {moves}")
+            print(f"Available move numbers [x]: {moves[:-1]}")
+            print("-----------------------------------------------")
             for option in self.options:
                 print(f"{num}:   {option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
                 num += 1
-
+            print("-----------------------------------------------")
+            
     def check_move(self, player):
             self.check_options(player)
             if self.options != []:
