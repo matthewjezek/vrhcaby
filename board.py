@@ -94,7 +94,7 @@ class Board:
                         if (place_index - number) >= 1:
                             if "W" not in self.make_stacks_list()[place_index - number -1]:
                                 options.append([place_index, place_index - number, number, "move"])
-                            elif self.make_stacks_list()[place_index - number -1] == ["K"]:
+                            elif self.make_stacks_list()[place_index - number -1] == ["W"]:
                                 options.append([place_index, place_index - number, number, "KILL"])
 
                         else:
@@ -131,7 +131,7 @@ class Board:
         elif to_place == "BAR" and self.board_list[from_place].stack[0] == "W":
             self.bar_W.append("W")
         elif to_place == "BAR" and self.board_list[from_place].stack[0] == "K":
-            self.bar_W.append("K")
+            self.bar_K.append("K")
         else:
             self.board_list[to_place].add_stone(self.board_list[from_place].stack[0])
         self.board_list[from_place].remove_stone()
