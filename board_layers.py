@@ -1,30 +1,26 @@
 
-def layers(board):
-    if len(max(board.make_stacks_list())) >= 5:
-        max_num = len(max(board.make_stacks_list()))
-    else:
-        max_num = 5
-    for j in range(1, max_num + 1):
+def layers(board): # Dynamický tisk po vstvách podle obsahu vrcholů
+    max_num = 5
+    for i in range(0, 24):
+        if len(board.stacks[i]) > max_num:
+            max_num = len(board.stacks[i])
+    for i in range(0, max_num):
         layer = " "
-        i = 11
-        for _ in range(0, 12):
-            place = board.make_stacks_list()[i]
-            if len(place) >= j:
-                layer += (" " + place[0] + " ")
+        for j in range(11, -1, -1):
+            place = board.stacks[j]
+            if len(place) >= i+1:
+                layer += (" " + place[i].color + " ")
             else:
                 layer += "   "
-            i -= 1
         print(f"|{layer}|")
     print("|                                     |")
-    k = max_num
-    for _ in range(1, max_num + 1):
+    for i in range(max_num, -1, -1):
         layer = " "
-        for l in range(12, 24):
-            place = board.make_stacks_list()[l]
-            if len(place) >= k:
-                layer += (" " + place[0] + " ")
+        for j in range(12, 24):
+            place = board.stacks[j]
+            if len(place) >= i+1:
+                layer += (" " + place[i].color + " ")
             else:
                 layer += "   "
         print(f"|{layer}|")
-        k -= 1
 
