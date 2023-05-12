@@ -109,49 +109,53 @@ class Board:
         if player.color == "W":
             if len(self.stacks[24].stack) > 0:
                 for roll in rolls:
-                    if len(self.stacks[roll-1].stack) > 0 and "K" == self.stacks[roll-1].stack[0].color:
-                        if len(self.stacks[roll - 1].stack) == 1:
-                            options.append(["BAR", roll, roll, "KILL"])
-                    else:
-                        options.append(["BAR", roll, roll, "move"])
+                    if roll != 0:
+                        if len(self.stacks[roll-1].stack) > 0 and "K" == self.stacks[roll-1].stack[0].color:
+                            if len(self.stacks[roll - 1].stack) == 1:
+                                options.append(["BAR", roll, roll, "KILL"])
+                        else:
+                            options.append(["BAR", roll, roll, "move"])
             sum = 0
-            for i in range(0, 18):
+            for i in range(18, 23):
                 sum += len(self.stacks[i].stack) if len(self.stacks[i].stack)>0 and self.stacks[i].stack[0].color == "W" else 0
-            sum += len(self.stacks[25].stack)
-            end = True if sum == 0 else False
+            sum += len(self.stacks[26].stack)
+            end = True if sum == 15 else False
             for place_index in range(0, 24):
                 if len(self.stacks[place_index].stack) > 0 and self.stacks[place_index].stack[0].color == "W":
                     for roll in rolls:
-                        if end and place_index + roll > 23:
-                            options.append([place_index + 1, "OFF", roll, "END"])
-                        elif place_index + roll <= 23 and len(self.stacks[place_index + roll].stack) > 0 and "K" == self.stacks[place_index + roll].stack[0].color:
-                            if len(self.stacks[place_index + roll].stack) == 1:
-                                options.append([place_index + 1, place_index + roll + 1, roll, "KILL"])
-                        elif place_index + roll <= 23:
-                            options.append([place_index + 1, place_index + roll + 1, roll, "move"])
+                        if roll != 0:
+                            if end and place_index + roll > 23:
+                                options.append([place_index + 1, "OFF", roll, "END"])
+                            elif place_index + roll <= 23 and len(self.stacks[place_index + roll].stack) > 0 and "K" == self.stacks[place_index + roll].stack[0].color:
+                                if len(self.stacks[place_index + roll].stack) == 1:
+                                    options.append([place_index + 1, place_index + roll + 1, roll, "KILL"])
+                            elif place_index + roll <= 23:
+                                options.append([place_index + 1, place_index + roll + 1, roll, "move"])
         elif player.color == "K":
             if len(self.stacks[25].stack) > 0:
                 for roll in rolls:
-                    if len(self.stacks[24 - roll].stack) > 0 and "W" == self.stacks[24 - roll].stack[0].color:
-                        if len(self.stacks[24 - roll].stack) == 1:
-                            options.append(["BAR", 25 - roll, roll, "KILL"])
-                    else:
-                        options.append(["BAR", 25 - roll, roll, "move"])
+                    if roll != 0:
+                        if len(self.stacks[24 - roll].stack) > 0 and "W" == self.stacks[24 - roll].stack[0].color:
+                            if len(self.stacks[24 - roll].stack) == 1:
+                                options.append(["BAR", 25 - roll, roll, "KILL"])
+                        else:
+                            options.append(["BAR", 25 - roll, roll, "move"])
             sum = 0
-            for i in range(7, 24):
+            for i in range(0, 6):
                 sum += len(self.stacks[i].stack) if len(self.stacks[i].stack)>0 and self.stacks[i].stack[0].color == "K" else 0
-            sum += len(self.stacks[25].stack)
-            end = True if sum == 0 else False
+            sum += len(self.stacks[27].stack)
+            end = True if sum == 15 else False
             for place_index in range(23, -1, -1):
                 if len(self.stacks[place_index].stack) > 0 and self.stacks[place_index].stack[0].color == "K":
                     for roll in rolls:
-                        if end and place_index - roll < 0:
-                            options.append([place_index + 1, "OFF", roll, "END"])
-                        elif place_index - roll >= 0 and len(self.stacks[place_index - roll].stack) > 0 and "W" == self.stacks[place_index - roll].stack[0].color:
-                            if len(self.stacks[place_index - roll].stack) == 1:
-                                options.append([place_index + 1, place_index - roll + 1, roll, "KILL"])
-                        elif place_index - roll >= 0:
-                            options.append([place_index + 1, place_index - roll + 1, roll, "move"])
+                        if roll != 0:
+                            if end and place_index - roll < 0:
+                                options.append([place_index + 1, "OFF", roll, "END"])
+                            elif place_index - roll >= 0 and len(self.stacks[place_index - roll].stack) > 0 and "W" == self.stacks[place_index - roll].stack[0].color:
+                                if len(self.stacks[place_index - roll].stack) == 1:
+                                    options.append([place_index + 1, place_index - roll + 1, roll, "KILL"])
+                            elif place_index - roll >= 0:
+                                options.append([place_index + 1, place_index - roll + 1, roll, "move"])
         final_options = []
         for option in options: # Odstraní duplicity
             if option not in final_options:

@@ -17,7 +17,7 @@ class Player:
         def roll(self):
             dice_1 = random.randint(1, 6)
             dice_2 = random.randint(1, 6)
-            self.rolls = [dice_1, dice_2]
+            self.rolls = [dice_1, dice_2, 0, 0]
             if dice_1 == dice_2:
                 self.double = True
                 self.rolls = [dice_1, dice_2, dice_1, dice_2]

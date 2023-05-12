@@ -1,0 +1,7 @@
+PROGRESS:
+--------------------
+Joe: 8 -> 5, [3] - move
+Joe: 13 -> 8, [5] - move
+Adam: 17 -> 22, [5] - move
+Adam: 17 -> 22, [5] - move
+Adam: 17 -> 22, [5] - move
