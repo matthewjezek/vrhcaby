@@ -5,9 +5,11 @@ import player
 
 board = board.Board()
 human = player.Player("human", "Joe", "W")
+AI = player.Player("AI", "Adam", "W" if human.color == "K" else "K")
 
 board.show()
-human.dice.roll()
-human.dice.show()
+human.dices.roll()
+human.dices.show()
+board.print_options(human)
 
 

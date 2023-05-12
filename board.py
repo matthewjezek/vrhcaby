@@ -1,19 +1,12 @@
-import board_layers
 from stone import Stone
-
-class Place:
-    def __init__(self, stack):
-        self.stack = stack
-
 class Board:
     def __init__(self):
         self.stones = self.make_stones()
         self.stacks = self.make_stacks()
-        self.bar_W = self.stacks[24]
-        self.bar_K = self.stacks[25]
-        self.off_W = self.stacks[26]
-        self.off_K = self.stacks[27]
-        self.options = [""]
+
+    class Place:
+        def __init__(self, stack):
+            self.stack = stack
 
     def reset(self): # Reset celé desky
         self.stones = self.make_stones()
@@ -30,126 +23,146 @@ class Board:
         return stones
 
     def make_stacks(self): # Vytvoří novou sadu vrcholů se začátečním rozpoložením kamenů
-        place_1 = Place([self.stones["W"][0], self.stones["W"][1]])
-        place_2 = Place([])
-        place_3 = Place([])
-        place_4 = Place([])
-        place_5 = Place([])
-        place_6 = Place([self.stones["K"][0], self.stones["K"][1], self.stones["K"][2], self.stones["K"][3], self.stones["K"][4]])
-        place_7 = Place([])
-        place_8 = Place([self.stones["K"][5], self.stones["K"][6], self.stones["K"][7]])
-        place_9 = Place([])
-        place_10 = Place([])
-        place_11 = Place([])
-        place_12 = Place([self.stones["W"][2], self.stones["W"][3], self.stones["W"][4], self.stones["W"][5], self.stones["W"][6]])
-        place_13 = Place([self.stones["K"][8], self.stones["K"][9], self.stones["K"][10], self.stones["K"][11] ,self.stones["K"][12]])
-        place_14 = Place([])
-        place_15 = Place([])
-        place_16 = Place([])
-        place_17 = Place([self.stones["W"][7], self.stones["W"][8], self.stones["W"][9]])
-        place_18 = Place([])
-        place_19 = Place([self.stones["W"][10], self.stones["W"][11], self.stones["W"][12], self.stones["W"][13], self.stones["W"][14]])
-        place_20 = Place([])
-        place_21 = Place([])
-        place_22 = Place([])
-        place_23 = Place([])
-        place_24 = Place([self.stones["K"][13], self.stones["K"][14]])
-        bar_w = Place([])
-        bar_k = Place([])
-        off_w = Place([])
-        off_k = Place([])
+        place_1 = self.Place([self.stones["W"][0], self.stones["W"][1]])
+        place_2 = self.Place([])
+        place_3 = self.Place([])
+        place_4 = self.Place([])
+        place_5 = self.Place([])
+        place_6 = self.Place([self.stones["K"][0], self.stones["K"][1], self.stones["K"][2], self.stones["K"][3], self.stones["K"][4]])
+        place_7 = self.Place([])
+        place_8 = self.Place([self.stones["K"][5], self.stones["K"][6], self.stones["K"][7]])
+        place_9 = self.Place([])
+        place_10 = self.Place([])
+        place_11 = self.Place([])
+        place_12 = self.Place([self.stones["W"][2], self.stones["W"][3], self.stones["W"][4], self.stones["W"][5], self.stones["W"][6]])
+        place_13 = self.Place([self.stones["K"][8], self.stones["K"][9], self.stones["K"][10], self.stones["K"][11] ,self.stones["K"][12]])
+        place_14 = self.Place([])
+        place_15 = self.Place([])
+        place_16 = self.Place([])
+        place_17 = self.Place([self.stones["W"][7], self.stones["W"][8], self.stones["W"][9]])
+        place_18 = self.Place([])
+        place_19 = self.Place([self.stones["W"][10], self.stones["W"][11], self.stones["W"][12], self.stones["W"][13], self.stones["W"][14]])
+        place_20 = self.Place([])
+        place_21 = self.Place([])
+        place_22 = self.Place([])
+        place_23 = self.Place([])
+        place_24 = self.Place([self.stones["K"][13], self.stones["K"][14]])
+        bar_w = self.Place([])
+        bar_k = self.Place([])
+        off_w = self.Place([])
+        off_k = self.Place([])
 
-        stacks = [place_1.stack, place_2.stack, place_3.stack, place_4.stack, place_5.stack, place_6.stack,
-                  place_7.stack, place_8.stack, place_9.stack, place_10.stack, place_11.stack, place_12.stack,
-                  place_13.stack, place_14.stack, place_15.stack, place_16.stack, place_17.stack, place_18.stack,
-                  place_19.stack, place_20.stack, place_21.stack, place_22.stack, place_23.stack, place_24.stack,
+        stacks = [place_1, place_2, place_3, place_4, place_5, place_6,
+                  place_7, place_8, place_9, place_10, place_11, place_12,
+                  place_13, place_14, place_15, place_16, place_17, place_18,
+                  place_19, place_20, place_21, place_22, place_23, place_24,
                   bar_w, bar_k, off_w, off_k]
         return stacks
 
-    def move_stone(self, from_place, to_place):
-        to_place.stack.append(from_place.stack.pop())
+    def move_stone(self, from_place, to_place, color): # Pohyb kamene na desce
+        stacks = self.stacks
+        from_place = 25 if from_place == "BAR" and color == "W" else from_place
+        from_place = 26 if from_place == "BAR" and color == "K" else from_place
+        to_place = 25 if to_place == "BAR" and color == "W" else to_place
+        to_place = 26 if to_place == "BAR" and color == "K" else to_place
+        to_place = 27 if to_place == "OFF" and color == "W" else to_place
+        to_place = 28 if to_place == "OFF" and color == "K" else to_place
+        stacks[to_place-1].stack.append(stacks[from_place-1].stack.pop())
 
-    def show(self):
-        print(f"\nWhite BAR: {self.bar_W.stack}")
+    def show(self): # Dynamické vrstvené tištění desky podle obsahu vrcholů
+        print(f"\nWhite BAR: {self.stacks[24].stack}")
         print("---------------------------------------")
         print("| 12 11 10  9  8  7  6  5  4  3  2  1 |")
-        print(f"|-------------------------------------| Black END: {self.off_K.stack}")
-        board_layers.layers(self)
-        print(f"|-------------------------------------| White END: {self.off_W.stack}")
+        print(f"|-------------------------------------| Black END: {self.stacks[27].stack}")
+        max_num = 5
+        for i in range(0, 24):
+            if len(self.stacks[i].stack) > max_num:
+                max_num = len(self.stacks[i].stack)
+        for i in range(0, max_num):
+            layer = " "
+            for j in range(11, -1, -1):
+                place = self.stacks[j].stack
+                if len(place) >= i + 1:
+                    layer += (" " + place[i].color + " ")
+                else:
+                    layer += "   "
+            print(f"|{layer}|")
+        for i in range(max_num, -1, -1):
+            layer = " "
+            for j in range(12, 24):
+                place = self.stacks[j].stack
+                if len(place) >= i + 1:
+                    layer += (" " + place[i].color + " ")
+                else:
+                    layer += "   "
+            print(f"|{layer}|")
+        print(f"|-------------------------------------| White END: {self.stacks[26].stack}")
         print("| 13 14 15 16 17 18 19 20 21 22 23 24 |")
         print("---------------------------------------")
-        print(f"Black BAR: {self.bar_K.stack}\n")
+        print(f"Black BAR: {self.stacks[25].stack}\n")
 
-    # def check_options(self, player):
-    #     options = []
-    #     player.generate_moves()
-    #     if player.color == "W":
-    #         place_index = 1
-    #         if len(self.bar_W) >= 1:
-    #             for number in player.moves:
-    #                 if "K" not in self.make_stacks_list()[number -1]:
-    #                     options.append(["BAR", number, number, "move"])
-    #                 elif self.make_stacks_list()[number -1] == ["K"]:
-    #                     options.append(["BAR", number, number, "KILL"])
-    #         for place in self.make_stacks_list():
-    #             if "W" in place:
-    #                 for number in player.moves:
-    #                     if (place_index + number) <= 24:
-    #                         if "K" not in self.make_stacks_list()[place_index + number -1]:
-    #                             options.append([place_index, place_index + number, number, "move"])
-    #                         elif self.make_stacks_list()[place_index + number -1] == ["K"]:
-    #                             options.append([place_index, place_index + number, number, "KILL"])
-    #
-    #                     else:
-    #                         options.append([place_index, "OFF", number, "END"])
-    #             place_index += 1
-    #     elif player.color == "K":
-    #         place_index = 24
-    #         if len(self.bar_K) >= 1:
-    #             for number in player.moves:
-    #                 if "W" not in self.make_stacks_list()[24 - number -1]:
-    #                     options.append(["BAR", 25 - number, number, "move"])
-    #                 elif self.make_stacks_list()[24 - number -1] == ["W"]:
-    #                     options.append(["BAR", 25 - number, number, "KILL"])
-    #         for _ in range(0, 24):
-    #             place = self.make_stacks_list()[place_index-1]
-    #             if "K" in place:
-    #                 for number in player.moves:
-    #                     if (place_index - number) >= 1:
-    #                         if "W" not in self.make_stacks_list()[place_index - number -1]:
-    #                             options.append([place_index, place_index - number, number, "move"])
-    #                         elif self.make_stacks_list()[place_index - number -1] == ["W"]:
-    #                             options.append([place_index, place_index - number, number, "KILL"])
-    #
-    #                     else:
-    #                         options.append([place_index, "OFF", number, "END"])
-    #
-    #             place_index -= 1
-    #     self.options = options
-    #     if self.options == []:
-    #         pass
-    #     else:
-    #         num = 1
-    #         print(f"OPTIONS for {player.color}:")
-    #         moves = ""
-    #         for move in player.moves:
-    #             moves += ("[" + str(move) + "],")
-    #         print(f"Available move numbers [x]: {moves[:-1]}")
-    #         print("-----------------------------------------------")
-    #         for option in self.options:
-    #             print(f"{num}:   {option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
-    #             num += 1
-    #         print("-----------------------------------------------")
+    def check_options(self, player): # Výpočet možností pro hráče
+        options = []
+        rolls = player.dices.rolls
+        if player.color == "W":
+            if len(self.stacks[24].stack) > 0:
+                for roll in rolls:
+                    if len(self.stacks[roll-1].stack) > 0 and "K" == self.stacks[roll-1].stack[0].color:
+                        if len(self.stacks[roll - 1].stack) == 1:
+                            options.append(["BAR", roll - 1, roll, "KILL"])
+                    else:
+                        options.append(["BAR", roll-1, roll, "move"])
+            sum = 0
+            for i in range(18, 24):
+                sum += len(self.stacks[i].stack)
+            end = True if sum == 15 else False
+            for place_index in range(0, 24):
+                if len(self.stacks[place_index].stack) > 0 and self.stacks[place_index].stack[0].color == "W":
+                    for roll in rolls:
+                        if end and place_index + roll > 23:
+                            options.append([place_index, "OFF", roll, "END"])
+                        elif place_index + roll <= 23 and len(self.stacks[place_index + roll].stack) > 0 and "K" == self.stacks[place_index + roll].stack[0].color:
+                            if len(self.stacks[place_index + roll].stack) == 1:
+                                options.append([place_index, place_index + roll, roll, "KILL"])
+                        else:
+                            options.append([place_index, place_index + roll, roll, "move"])
+        elif player.color == "K":
+            if len(self.stacks[25].stack) > 0:
+                for roll in rolls:
+                    if len(self.stacks[24 - roll].stack) > 0 and "W" == self.stacks[24 - roll].stack[0].color:
+                        if len(self.stacks[24 - roll].stack) == 1:
+                            options.append(["BAR", 24 - roll, roll, "KILL"])
+                    else:
+                        options.append(["BAR", 24 - roll, roll, "move"])
+            sum = 0
+            for i in range(0, 6):
+                sum += len(self.stacks[i].stack)
+            end = True if sum == 15 else False
+            for place_index in range(23, -1, -1):
+                if len(self.stacks[place_index].stack) > 0 and self.stacks[place_index].stack[0].color == "K":
+                    for roll in rolls:
+                        if end and place_index - roll < 0:
+                            options.append([place_index, "OFF", roll, "END"])
+                        elif place_index - roll >= 0 and len(self.stacks[place_index - roll].stack) > 0 and "W" == self.stacks[place_index - roll].stack[0].color:
+                            if len(self.stacks[place_index - roll].stack) == 1:
+                                options.append([place_index, place_index - roll, roll, "KILL"])
+                        else:
+                            options.append([place_index, place_index - roll, roll, "move"])
+        final_options = []
+        for option in options: # Odstraní duplicity
+            if option not in final_options:
+                final_options.append(option)
+        return final_options
 
-    # def check_move(self, player):
-    #         self.check_options(player)
-    #         if self.options != []:
-    #             return True
-    #         else:
-    #             return False
-    #
-    # def check_win(self):
-    #     if len(self.off_W) == 15 or len(self.off_K) == 15:
-    #         return True
-    #     else:
-    #         return False
+    def print_options(self, player):
+        options = self.check_options(player)
+        if len(options) == 0:
+            pass
+        else:
+            num = 1
+            print(f"OPTIONS for {player.color}:")
+            print("-----------------------------------------------")
+            for option in options:
+                print(f"{num}:   {option[0]+1} -> {option[1]+1}, [{option[2]}], {option[3]}")
+                num += 1
+            print("-----------------------------------------------")
