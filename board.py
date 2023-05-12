@@ -77,7 +77,7 @@ class Board:
         print("| 12 11 10  9  8  7  6  5  4  3  2  1 |")
         print(f"|-------------------------------------| Black END: {self.stacks[27].stack}")
         max_num = 5
-        for i in range(0, 24):
+        for i in range(0, 12):
             if len(self.stacks[i].stack) > max_num:
                 max_num = len(self.stacks[i].stack)
         for i in range(0, max_num):
@@ -89,6 +89,10 @@ class Board:
                 else:
                     layer += "   "
             print(f"|{layer}|")
+        max_num = 5
+        for i in range(12, 24):
+            if len(self.stacks[i].stack) > max_num:
+                max_num = len(self.stacks[i].stack)
         for i in range(max_num, -1, -1):
             layer = " "
             for j in range(12, 24):
@@ -116,7 +120,7 @@ class Board:
                         else:
                             options.append(["BAR", roll, roll, "move"])
             sum = 0
-            for i in range(18, 23):
+            for i in range(18, 24):
                 sum += len(self.stacks[i].stack) if len(self.stacks[i].stack)>0 and self.stacks[i].stack[0].color == "W" else 0
             sum += len(self.stacks[26].stack)
             end = True if sum == 15 else False

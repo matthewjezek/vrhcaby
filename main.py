@@ -36,8 +36,8 @@ class Game:
             if max(player.dices.rolls) == 0: break
             clear()
             print(f"TURN FOR {player.name}.")
-            sleep(1)
             self.board.show()
+            sleep(1)
             player.dices.show()
             self.board.print_options(player)
             if len(player.options) > 0:
@@ -65,10 +65,14 @@ game = Game(player.Player("AI", "Joe", "K"),
 
 while True:
     game.player_round(game.player_1)
-    if game.won: break
+    game.winner
+    if game.won:
+        break
     game.player_round(game.player_2)
-    if game.won: break
-game.winner()
+    game.winner()
+    if game.won:
+        break
+
 
 
 
