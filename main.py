@@ -11,5 +11,8 @@ board.show()
 human.dices.roll()
 human.dices.show()
 board.print_options(human)
+board.move_stone(1, "BAR", human, "move")
+board.show()
+board.print_options(human)
 
 
