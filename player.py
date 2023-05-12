@@ -1,5 +1,5 @@
 import random
-
+from time import sleep
 
 class Player:
     def __init__(self, player_type, player_name, player_color):
@@ -7,6 +7,7 @@ class Player:
         self.color = player_color
         self.type = player_type
         self.dices = self.Dices()
+        self.options = []
 
     class Dices:
         def __init__(self):
@@ -32,16 +33,20 @@ class Player:
                 print(f"└───┘ └───┘")
 
     def choose_option(self, text, from_int, to_int):
-        while True:
-            user_input = input(text)
-            if user_input.isdigit():
-                choose = int(user_input)
-                if from_int <= choose <= to_int:
-                    break
+        if self.type == "AI":
+            sleep(1)
+            choose = random.randint(from_int, to_int)
+        else:
+            while True:
+                user_input = input(text)
+                if user_input.isdigit():
+                    choose = int(user_input)
+                    if from_int <= choose <= to_int:
+                        break
+                    else:
+                        print("Wrong option!")
                 else:
-                    print("Wrong option!")
-            else:
-                print("Choose number!")
+                    print("Choose number!")
         return choose
 
 

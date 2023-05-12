@@ -60,7 +60,7 @@ class Board:
                   bar_w, bar_k, off_w, off_k]
         return stacks
 
-    def move_stone(self, from_place, to_place, player, type): # Pohyb kamene na desce
+    def move_stone(self, from_place, to_place, player): # Pohyb kamene na desce
         stacks = self.stacks
         color = player.color
         from_place = 25 if from_place == "BAR" and color == "W" else from_place
@@ -70,7 +70,6 @@ class Board:
         to_place = 27 if to_place == "OFF" and color == "W" else to_place
         to_place = 28 if to_place == "OFF" and color == "K" else to_place
         stacks[to_place-1].stack.append(stacks[from_place-1].stack.pop())
-        self.history.append([player.name, from_place, to_place, color, type])
 
     def show(self): # Dynamické vrstvené tištění desky podle obsahu vrcholů
         print(f"\nWhite BAR: {self.stacks[24].stack}")
@@ -86,7 +85,7 @@ class Board:
             for j in range(11, -1, -1):
                 place = self.stacks[j].stack
                 if len(place) >= i + 1:
-                    layer += (" " + place[i].color + " ")
+                    layer += (" " + str(place[i]) + " ")
                 else:
                     layer += "   "
             print(f"|{layer}|")
@@ -95,7 +94,7 @@ class Board:
             for j in range(12, 24):
                 place = self.stacks[j].stack
                 if len(place) >= i + 1:
-                    layer += (" " + place[i].color + " ")
+                    layer += (" " + str(place[i]) + " ")
                 else:
                     layer += "   "
             print(f"|{layer}|")
@@ -116,9 +115,10 @@ class Board:
                     else:
                         options.append(["BAR", roll, roll, "move"])
             sum = 0
-            for i in range(18, 24):
-                sum += len(self.stacks[i].stack)
-            end = True if sum == 15 else False
+            for i in range(0, 18):
+                sum += len(self.stacks[i].stack) if len(self.stacks[i].stack)>0 and self.stacks[i].stack[0].color == "W" else 0
+            sum += len(self.stacks[25].stack)
+            end = True if sum == 0 else False
             for place_index in range(0, 24):
                 if len(self.stacks[place_index].stack) > 0 and self.stacks[place_index].stack[0].color == "W":
                     for roll in rolls:
@@ -127,7 +127,7 @@ class Board:
                         elif place_index + roll <= 23 and len(self.stacks[place_index + roll].stack) > 0 and "K" == self.stacks[place_index + roll].stack[0].color:
                             if len(self.stacks[place_index + roll].stack) == 1:
                                 options.append([place_index + 1, place_index + roll + 1, roll, "KILL"])
-                        else:
+                        elif place_index + roll <= 23:
                             options.append([place_index + 1, place_index + roll + 1, roll, "move"])
         elif player.color == "K":
             if len(self.stacks[25].stack) > 0:
@@ -138,9 +138,10 @@ class Board:
                     else:
                         options.append(["BAR", 25 - roll, roll, "move"])
             sum = 0
-            for i in range(0, 6):
-                sum += len(self.stacks[i].stack)
-            end = True if sum == 15 else False
+            for i in range(7, 24):
+                sum += len(self.stacks[i].stack) if len(self.stacks[i].stack)>0 and self.stacks[i].stack[0].color == "K" else 0
+            sum += len(self.stacks[25].stack)
+            end = True if sum == 0 else False
             for place_index in range(23, -1, -1):
                 if len(self.stacks[place_index].stack) > 0 and self.stacks[place_index].stack[0].color == "K":
                     for roll in rolls:
@@ -149,12 +150,13 @@ class Board:
                         elif place_index - roll >= 0 and len(self.stacks[place_index - roll].stack) > 0 and "W" == self.stacks[place_index - roll].stack[0].color:
                             if len(self.stacks[place_index - roll].stack) == 1:
                                 options.append([place_index + 1, place_index - roll + 1, roll, "KILL"])
-                        else:
+                        elif place_index - roll >= 0:
                             options.append([place_index + 1, place_index - roll + 1, roll, "move"])
         final_options = []
         for option in options: # Odstraní duplicity
             if option not in final_options:
                 final_options.append(option)
+        player.options = final_options
         return final_options
 
     def print_options(self, player):
