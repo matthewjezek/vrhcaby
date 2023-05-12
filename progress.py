@@ -1,9 +1,21 @@
 from time import sleep
 from os_comands import clear
 
-while True:
+def show_data():
     with open("progress.txt", "r") as file:
-        clear()
         data = file.read()
+        clear()
         print(data)
-        sleep(1)
+
+def check_change():
+    show_data()
+    while True:
+        with open("progress.txt", "r") as file:
+            data_1 = file.read()
+            sleep(0.1)
+        with open("progress.txt", "r") as file:
+            data_2 = file.read()
+        if data_1 != data_2:
+            show_data()
+
+check_change()
