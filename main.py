@@ -65,7 +65,7 @@ game = Game(player.Player("AI", "Joe", "K"),
 
 while True:
     game.player_round(game.player_1)
-    game.winner
+    game.winner()
     if game.won:
         break
     game.player_round(game.player_2)
