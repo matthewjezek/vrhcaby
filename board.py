@@ -133,8 +133,8 @@ class Board:
             sum += len(home_place) if home_place and home_place[0].color == player.color else 0
         home_board_check = True if sum == 15 else False
         # Výpočet indexu umístění nejvzdálenějšího kamene
-        last_stone_i = board[0]
-        for index in board:
+        last_stone_i = board[23]
+        for index in reversed(board):
             place = stacks[index].stack
             last_stone_i = index if place and place[0].color == player.color else last_stone_i
         # Generování možností pro pohyb z vrcholů na desce

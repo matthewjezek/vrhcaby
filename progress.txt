@@ -1,27 +1,4 @@
 PROGRESS:
 --------------------
-Joe: 12 -> 14, [2] - move
-Joe: 14 -> 19, [5] - move
-Adam: 13 -> 9, [4] - move
-Adam: 8 -> 7, [1] - move
-Joe: 17 -> 22, [5] - move
-Joe: 19 -> 21, [2] - move
-Adam: 13 -> 9, [4] - SAVE
-Adam: 7 -> 2, [5] - move
-Joe: 17 -> 21, [4] - SAVE
-Joe: 17 -> 22, [5] - SAVE
-Adam: 8 -> 5, [3] - move
-Adam: 13 -> 8, [5] - SAVE
-Joe: 1 -> 2, [1] - KILL
-Joe: 2 -> 7, [5] - move
-Adam: 6 -> 5, [1] - SAVE
-Adam: 13 -> 7, [6] - KILL
-Joe: 12 -> 16, [4] - move
-Joe: 16 -> 21, [5] - move
-Adam: 13 -> 7, [6] - SAVE
-Adam: 9 -> 6, [3] - move
-Joe: 12 -> 17, [5] - move
-Joe: 21 -> 23, [2] - move
-Adam: 7 -> 1, [6] - KILL
-Adam: 5 -> 1, [4] - SAVE
-Joe: 22 -> 23, [1] - SAVE
+Joe: 17 -> 19, [2] - move
+Joe: 17 -> 23, [6] - move
