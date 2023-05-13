@@ -33,16 +33,34 @@ class Player:
                 print(f"│ {self.rolls[0]} │ │ {self.rolls[1]} │")
                 print(f"└───┘ └───┘")
 
-    def choose_option(self, text, from_int, to_int):
+    def choose_option(self, text, options):
         if self.type == "AI":
             sleep(1)
-            choose = random.randint(from_int, to_int)
+            found = False
+            for i in range(0, len(options)):
+                if "END" in options[i]:
+                    choose = i + 1
+                    found = True
+                    break
+            if not found:
+                for i in range(0, len(options)):
+                    if "SAVE" in options[i]:
+                        choose = i + 1
+                        found = True
+            if not found:
+                for i in range(0, len(options)):
+                    if "KILL" in options[i]:
+                        choose = i + 1
+                        found = True
+                        break
+            if not found:
+                choose = random.randint(1, len(options))
         else:
             while True:
                 user_input = input(text)
                 if user_input.isdigit():
                     choose = int(user_input)
-                    if from_int <= choose <= to_int:
+                    if 1 <= choose <= len(options):
                         break
                     else:
                         print("Wrong option!")

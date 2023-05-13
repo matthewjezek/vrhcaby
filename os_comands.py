@@ -7,4 +7,9 @@ def clear():
         _ = system('clear')
 
 def start(app):
-    system(f'start cmd /K "color B && python {app}"')
+    if name == 'nt':
+        system(f'start cmd /K "color B && python {app}"')
+
+def set_background(color):
+    if name == 'nt':
+        system(f'color {color}')

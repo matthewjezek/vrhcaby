@@ -5,6 +5,6 @@ class Stone:
 
     def __repr__(self):
         if self.color == "W":
-            return "■"
-        if self.color == "K":
             return "□"
+        if self.color == "K":
+            return "■"

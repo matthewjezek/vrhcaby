@@ -71,11 +71,11 @@ class Board:
         to_place = 28 if to_place == "OFF" and color == "K" else to_place
         stacks[to_place-1].stack.append(stacks[from_place-1].stack.pop())
 
-    def show(self): # Dynamické vrstvené tištění desky podle obsahu vrcholů
-        print(f"\nWhite BAR: {self.stacks[24].stack}")
+    def show(self, player_1, player_2): # Dynamické vrstvené tištění desky podle obsahu vrcholů
+        print(f"\n{player_1.name if player_1.color == 'W' else player_2.name} BAR: {self.stacks[24].stack}")
         print("---------------------------------------")
         print("| 12 11 10  9  8  7  6  5  4  3  2  1 |")
-        print(f"|-------------------------------------| Black END: {self.stacks[27].stack}")
+        print(f"|-------------------------------------| {player_1.name if player_1.color == 'K' else player_2.name} END: {self.stacks[27].stack}")
         max_num = 5
         for i in range(0, 12):
             if len(self.stacks[i].stack) > max_num:
@@ -102,66 +102,62 @@ class Board:
                 else:
                     layer += "   "
             print(f"|{layer}|")
-        print(f"|-------------------------------------| White END: {self.stacks[26].stack}")
+        print(f"|-------------------------------------| {player_1.name if player_1.color == 'W' else player_2.name} END: {self.stacks[26].stack}")
         print("| 13 14 15 16 17 18 19 20 21 22 23 24 |")
         print("---------------------------------------")
-        print(f"Black BAR: {self.stacks[25].stack}\n")
+        print(f"{player_1.name if player_1.color == 'K' else player_2.name} BAR: {self.stacks[25].stack}\n")
 
     def check_options(self, player): # Výpočet možností pro hráče
         options = []
-        rolls = player.dices.rolls
-        if player.color == "W":
-            if len(self.stacks[24].stack) > 0:
+        stacks = self.stacks
+        rolls = [roll for roll in player.dices.rolls if roll != 0]
+        bar = stacks[24].stack if player.color == "W" else stacks[25].stack
+        off = stacks[26].stack if player.color == "W" else stacks[27].stack
+        home_board = range(18, 24) if player.color == "W" else range(0, 6)
+        board = range(0, 24) if player.color == "W" else range(23, -1, -1)
+        # Generování možností pro vracení kamenů hráče z baru
+        if bar:
+            for roll in rolls:
+                place_i = board[roll-1]
+                place = stacks[place_i].stack
+                if len(place) == 1 and player.color != place[0].color:
+                    options.append(["BAR", place_i+1, roll, "KILL"])
+                elif len(place) == 1 and player.color == place[0].color:
+                    options.append(["BAR", place_i+1, roll, "SAVE"])
+                elif not place or (place and player.color == place[0].color):
+                    options.append(["BAR", place_i+1, roll, "move"])
+        # Kontrola, jestli má hráč všechny kameny na domácí ohradě
+        sum = len(off)
+        for index in home_board:
+            home_place = stacks[index].stack
+            sum += len(home_place) if home_place and home_place[0].color == player.color else 0
+        home_board_check = True if sum == 15 else False
+        # Výpočet indexu umístění nejvzdálenějšího kamene
+        last_stone_i = board[0]
+        for index in board:
+            place = stacks[index].stack
+            last_stone_i = index if place and place[0].color == player.color else last_stone_i
+        # Generování možností pro pohyb z vrcholů na desce
+        for num in range(1, 25):
+            place_i = board[num-1]
+            place = stacks[place_i].stack
+            if place and place[0].color == player.color:
                 for roll in rolls:
-                    if roll != 0:
-                        if len(self.stacks[roll-1].stack) > 0 and "K" == self.stacks[roll-1].stack[0].color:
-                            if len(self.stacks[roll - 1].stack) == 1:
-                                options.append(["BAR", roll, roll, "KILL"])
-                        else:
-                            options.append(["BAR", roll, roll, "move"])
-            sum = 0
-            for i in range(18, 24):
-                sum += len(self.stacks[i].stack) if len(self.stacks[i].stack)>0 and self.stacks[i].stack[0].color == "W" else 0
-            sum += len(self.stacks[26].stack)
-            end = True if sum == 15 else False
-            for place_index in range(0, 24):
-                if len(self.stacks[place_index].stack) > 0 and self.stacks[place_index].stack[0].color == "W":
-                    for roll in rolls:
-                        if roll != 0:
-                            if end and place_index + roll > 23:
-                                options.append([place_index + 1, "OFF", roll, "END"])
-                            elif place_index + roll <= 23 and len(self.stacks[place_index + roll].stack) > 0 and "K" == self.stacks[place_index + roll].stack[0].color:
-                                if len(self.stacks[place_index + roll].stack) == 1:
-                                    options.append([place_index + 1, place_index + roll + 1, roll, "KILL"])
-                            elif place_index + roll <= 23:
-                                options.append([place_index + 1, place_index + roll + 1, roll, "move"])
-        elif player.color == "K":
-            if len(self.stacks[25].stack) > 0:
-                for roll in rolls:
-                    if roll != 0:
-                        if len(self.stacks[24 - roll].stack) > 0 and "W" == self.stacks[24 - roll].stack[0].color:
-                            if len(self.stacks[24 - roll].stack) == 1:
-                                options.append(["BAR", 25 - roll, roll, "KILL"])
-                        else:
-                            options.append(["BAR", 25 - roll, roll, "move"])
-            sum = 0
-            for i in range(0, 6):
-                sum += len(self.stacks[i].stack) if len(self.stacks[i].stack)>0 and self.stacks[i].stack[0].color == "K" else 0
-            sum += len(self.stacks[27].stack)
-            end = True if sum == 15 else False
-            for place_index in range(23, -1, -1):
-                if len(self.stacks[place_index].stack) > 0 and self.stacks[place_index].stack[0].color == "K":
-                    for roll in rolls:
-                        if roll != 0:
-                            if end and place_index - roll < 0:
-                                options.append([place_index + 1, "OFF", roll, "END"])
-                            elif place_index - roll >= 0 and len(self.stacks[place_index - roll].stack) > 0 and "W" == self.stacks[place_index - roll].stack[0].color:
-                                if len(self.stacks[place_index - roll].stack) == 1:
-                                    options.append([place_index + 1, place_index - roll + 1, roll, "KILL"])
-                            elif place_index - roll >= 0:
-                                options.append([place_index + 1, place_index - roll + 1, roll, "move"])
+                    if num + roll > 24:
+                        if home_board_check and (num + roll == 25 or (num + roll > 25 and num == board[last_stone_i]+1)):
+                            options.append([place_i + 1, "OFF", roll, "END"])
+                    else:
+                        to_place_i = board[num-1 + roll]
+                        to_place = stacks[to_place_i].stack
+                        if len(to_place) == 1 and player.color != to_place[0].color:
+                            options.append([place_i + 1, to_place_i + 1, roll, "KILL"])
+                        elif len(to_place) == 1 and player.color == to_place[0].color:
+                            options.append([place_i + 1, to_place_i + 1, roll, "SAVE"])
+                        elif not to_place or (to_place and to_place[0].color == player.color):
+                            options.append([place_i + 1, to_place_i + 1, roll, "move"])
+        # Odstranění duplicit v options
         final_options = []
-        for option in options: # Odstraní duplicity
+        for option in options:
             if option not in final_options:
                 final_options.append(option)
         player.options = final_options

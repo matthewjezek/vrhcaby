@@ -1,5 +1,5 @@
 from time import sleep
-from os_comands import clear, start
+import os_comands as os
 import board
 import player
 
@@ -10,7 +10,8 @@ class Game:
         self.board = board
         self.won = False
         self.reset_history()
-        start("progress.py")
+        os.set_background("F0")
+        os.start("progress.py")
 
     def write_history(self, player, option):
         with open("progress.txt", "a") as file:
@@ -34,14 +35,14 @@ class Game:
         player.dices.roll()
         while True:
             if max(player.dices.rolls) == 0: break
-            clear()
+            os.clear()
             print(f"TURN FOR {player.name}.")
-            self.board.show()
+            self.board.show(self.player_1, self.player_2)
             sleep(1)
             player.dices.show()
             self.board.print_options(player)
             if len(player.options) > 0:
-                choose = player.choose_option("Choose option: ", 1, len(player.options))
+                choose = player.choose_option("Choose option: ", player.options)
             else:
                 print(f"NO OPTIONS FOR {player.name}")
                 sleep(2)
@@ -59,8 +60,8 @@ class Game:
 
 
 
-game = Game(player.Player("AI", "Joe", "K"),
-            player.Player("AI", "Adam", "W"),
+game = Game(player.Player("AI", "Joe", "W"),
+            player.Player("AI", "Adam", "K"),
             board.Board())
 
 while True:

@@ -1,10 +1,10 @@
 from time import sleep
-from os_comands import clear
+import os_comands as os
 
 def show_data():
     with open("progress.txt", "r") as file:
         data = file.read()
-        clear()
+        os.clear()
         print(data)
 
 def check_change():
