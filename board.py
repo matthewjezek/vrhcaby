@@ -144,7 +144,7 @@ class Board:
             if place and place[0].color == player.color:
                 for roll in rolls:
                     if num + roll > 24:
-                        if home_board_check and (num + roll == 25 or (num + roll > 25 and num == board[last_stone_i]+1)):
+                        if home_board_check and (num + roll == 25 or (num + roll > 25 and place_i == last_stone_i)):
                             options.append([place_i + 1, "OFF", roll, "END"])
                     else:
                         to_place_i = board[num-1 + roll]
