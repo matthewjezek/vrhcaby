@@ -1,2 +1,22 @@
 PROGRESS:
 --------------------
+Joe: 12 -> 15, [3] - move
+Joe: 15 -> 19, [4] - SAVE
+Adam: 6 -> 5, [1] - move
+Adam: 13 -> 9, [4] - move
+Joe: 12 -> 14, [2] - move
+Joe: 19 -> 20, [1] - move
+Adam: 5 -> 3, [2] - move
+Adam: 8 -> 3, [5] - SAVE
+Joe: 14 -> 20, [6] - SAVE
+Joe: 12 -> 14, [2] - move
+Adam: 9 -> 3, [6] - SAVE
+Adam: 8 -> 3, [5] - move
+Joe: 1 -> 5, [4] - move
+Joe: 1 -> 5, [4] - SAVE
+Joe: 5 -> 9, [4] - move
+Joe: 5 -> 9, [4] - SAVE
+Adam: 8 -> 3, [5] - SAVE
+Adam: 13 -> 10, [3] - move
+Joe: 14 -> 17, [3] - SAVE
+Joe: 20 -> 22, [2] - move

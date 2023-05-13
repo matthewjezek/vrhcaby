@@ -30,15 +30,15 @@ class Board:
         place_3 = self.Place([])
         place_4 = self.Place([])
         place_5 = self.Place([])
-        place_6 = self.Place(
-            [self.stones["K"][0], self.stones["K"][1], self.stones["K"][2], self.stones["K"][3], self.stones["K"][4]])
+        place_6 = self.Place([self.stones["K"][0], self.stones["K"][1], self.stones["K"][2], self.stones["K"][3],
+                              self.stones["K"][4]])
         place_7 = self.Place([])
         place_8 = self.Place([self.stones["K"][5], self.stones["K"][6], self.stones["K"][7]])
         place_9 = self.Place([])
         place_10 = self.Place([])
         place_11 = self.Place([])
-        place_12 = self.Place(
-            [self.stones["W"][2], self.stones["W"][3], self.stones["W"][4], self.stones["W"][5], self.stones["W"][6]])
+        place_12 = self.Place([self.stones["W"][2], self.stones["W"][3], self.stones["W"][4], self.stones["W"][5],
+                               self.stones["W"][6]])
         place_13 = self.Place([self.stones["K"][8], self.stones["K"][9], self.stones["K"][10], self.stones["K"][11],
                                self.stones["K"][12]])
         place_14 = self.Place([])
