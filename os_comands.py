@@ -19,3 +19,8 @@ def start(app):
 def set_color(color):
     if name == 'nt':
         system(f'color {color}')
+
+def kill_window():
+    if name == 'nt':
+        system('title kill_window')
+        system(f'taskkill /f /fi "WINDOWTITLE eq kill_window"')

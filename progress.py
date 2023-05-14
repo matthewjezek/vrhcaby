@@ -1,5 +1,6 @@
 from time import sleep
 import os_comands as os
+import json
 import colorama
 from colorama import Fore, Back, Style
 
@@ -27,6 +28,10 @@ def check_change():
             data_2 = file.read()
         if data_1 != data_2:
             show_data()
+        with open('exit.json', 'r') as f:
+            exit_app = json.load(f)
+        if exit_app:
+            os.kill_window()
 
-os.system("MODE CON: COLS=90 LINES=10")
+exit_app = False
 check_change()

@@ -1,10 +1,11 @@
+import stone
 from stone import Stone
 
 
 class Board:
     def __init__(self):
         self.stones = self.make_stones()
-        self.stacks = self.make_stacks()
+        self.stacks = self.make_stacks(None)
 
     class Place:
         def __init__(self, stack):
@@ -12,7 +13,7 @@ class Board:
 
     def reset(self):  # Reset celé desky
         self.stones = self.make_stones()
-        self.stacks = self.make_stacks()
+        self.stacks = self.make_stacks(None)
 
     def make_stones(self):  # Vytvoří novou sadu kamenů
         stones = {
@@ -23,45 +24,37 @@ class Board:
         }
         return stones
 
-    def make_stacks(self):  # Vytvoří novou sadu vrcholů se začátečním rozpoložením kamenů
-        place_1 = self.Place([self.stones["W"][0], self.stones["W"][1]])
-        place_2 = self.Place([])
-        place_3 = self.Place([])
-        place_4 = self.Place([])
-        place_5 = self.Place([])
-        place_6 = self.Place([self.stones["K"][0], self.stones["K"][1], self.stones["K"][2], self.stones["K"][3],
-                              self.stones["K"][4]])
-        place_7 = self.Place([])
-        place_8 = self.Place([self.stones["K"][5], self.stones["K"][6], self.stones["K"][7]])
-        place_9 = self.Place([])
-        place_10 = self.Place([])
-        place_11 = self.Place([])
-        place_12 = self.Place([self.stones["W"][2], self.stones["W"][3], self.stones["W"][4], self.stones["W"][5],
-                               self.stones["W"][6]])
-        place_13 = self.Place([self.stones["K"][8], self.stones["K"][9], self.stones["K"][10], self.stones["K"][11],
-                               self.stones["K"][12]])
-        place_14 = self.Place([])
-        place_15 = self.Place([])
-        place_16 = self.Place([])
-        place_17 = self.Place([self.stones["W"][7], self.stones["W"][8], self.stones["W"][9]])
-        place_18 = self.Place([])
-        place_19 = self.Place([self.stones["W"][10], self.stones["W"][11], self.stones["W"][12], self.stones["W"][13],
-                               self.stones["W"][14]])
-        place_20 = self.Place([])
-        place_21 = self.Place([])
-        place_22 = self.Place([])
-        place_23 = self.Place([])
-        place_24 = self.Place([self.stones["K"][13], self.stones["K"][14]])
-        bar_w = self.Place([])
-        bar_k = self.Place([])
-        off_w = self.Place([])
-        off_k = self.Place([])
-
-        stacks = [place_1, place_2, place_3, place_4, place_5, place_6,
-                  place_7, place_8, place_9, place_10, place_11, place_12,
-                  place_13, place_14, place_15, place_16, place_17, place_18,
-                  place_19, place_20, place_21, place_22, place_23, place_24,
-                  bar_w, bar_k, off_w, off_k]
+    def make_stacks(self, layout_dict):  # Vytvoří novou sadu vrcholů
+        if layout_dict is None:
+            layout_dict = {
+                "W": [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, 0],
+                "K": [0, 0, 0, 0, 0, 5, 0, 3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+                "other_places": [0, 0, 0, 0]
+            }
+        stacks = []
+        stone_W_i = 0
+        stone_K_i = 0
+        for place_i in range(0, 24):
+            stacks.append(None)
+            num_of_stones = layout_dict["W"][place_i]
+            stack = []
+            for _ in range(0, num_of_stones):
+                stack.append(self.stones["W"][stone_W_i])
+                stone_W_i += 1
+            num_of_stones = layout_dict["K"][place_i]
+            for _ in range(0, num_of_stones):
+                stack.append(self.stones["K"][stone_K_i])
+                stone_K_i += 1
+            stacks[place_i] = self.Place(stack)
+        for place_i in range(24, 28):
+            num_of_stones = layout_dict["other_places"][place_i-24]
+            stack = []
+            for _ in range(0, num_of_stones):
+                if place_i in [24, 26]:
+                    stack.append(stone.Stone("W"))
+                else:
+                    stack.append(stone.Stone("K"))
+            stacks.append(self.Place(stack))
         return stacks
 
     def move_stone(self, from_place, to_place, player):  # Pohyb kamene na desce
@@ -187,3 +180,24 @@ class Board:
                 print(f"{num}:   {option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
                 num += 1
             print("-----------------------------------------------")
+
+    def save_layout(self):
+        layout = {
+            "W": [],
+            "K": [],
+            "other_places": []
+        }
+        for place_i in range(0, 24):
+            place = self.stacks[place_i].stack
+            if place and place[0].color == "W":
+                layout["W"].append(len(place))
+            else:
+                layout["W"].append(0)
+            if place and place[0].color == "K":
+                layout["K"].append(len(place))
+            else:
+                layout["K"].append(0)
+        for place_i in range(24, 28):
+            layout["other_places"].append(len(self.stacks[place_i].stack))
+        return layout
+

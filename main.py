@@ -2,12 +2,45 @@ from time import sleep
 import os_comands as os
 import board
 import player
+import json
+
+def exit_apps():
+    with open('exit.json', 'w') as f:
+        data = True
+        json.dump(data, f)
+    sleep(1)
+    with open('exit.json', 'w') as f:
+        data = False
+        json.dump(data, f)
+    os.set_color("0F")
+    os.clear()
+    exit()
 
 class Game:
     def __init__(self, board):
         self.player_1 = None
         self.player_2 = None
         self.board = board
+        self.close = False
+
+    def save_game(self):
+        data = {
+            "board": {
+                "layout": self.board.save_layout()
+            },
+            "player_1": {
+                "name": self.player_1.name,
+                "type": self.player_1.type,
+                "color": self.player_1.color
+            },
+            "player_2": {
+                "name": self.player_2.name,
+                "type": self.player_2.type,
+                "color": self.player_2.color
+            }
+        }
+        with open('save_file.json', 'w') as f:
+            json.dump(data, f)
 
     def write_history(self, player, option):
         with open("progress.txt", "a") as file:
@@ -36,6 +69,7 @@ class Game:
             os.clear()
             self.board.show(self.player_1, self.player_2)
             print(f"{winner.name} won -> {win_type}.\n")
+            input()
 
     def player_round(self, player):
         player.dices.roll()
@@ -90,10 +124,18 @@ class Game:
             p_color = "W" if self.player_1.color == "K" else "K"
         new_player = player.Player(p_type, p_name, p_color)
         return new_player
-    def load(self):
-        pass
-    def new(self):
+
+    def load_game(self):
+        os.clear()
+        with open('save_file.json', 'r') as f:
+            data = json.load(f)
         os.set_color("0F")
+        self.reset_history()
+        self.board.stacks = self.board.make_stacks(data["board"]["layout"])
+        self.player_1 = player.Player(data["player_1"]["type"], data["player_1"]["name"], data["player_1"]["color"])
+        self.player_2 = player.Player(data["player_2"]["type"], data["player_2"]["name"], data["player_2"]["color"])
+
+    def new_game(self):
         os.clear()
         self.reset_history()
         self.board.reset()
@@ -106,22 +148,43 @@ class Game:
         os.start("progress.py")
         while True:
             self.player_round(self.player_1)
+            self.save_game()
             if game.won():
                 break
             self.player_round(self.player_2)
+            self.save_game()
             if game.won():
                 break
 
+    def statistics(self):
+        pass
+
+    def menu(self):
+        os.clear()
+        os.set_color("0F")
+        print(" 1. New Game\n 2. Load\n 3. Exit\n")
+        choose = self.choose_num("Choose option: ", [1, 2, 3])
+        match choose:
+            case 1:
+                self.new_game()
+            case 2:
+                self.load_game()
+            case 3:
+                exit_apps()
 
 
-game = Game(board.Board())
-
-game.new()
-game.play()
-if game.won():
-    game.winner()
 
 
+if __name__ == '__main__':
+    game = Game(board.Board())
+    try:
+        while True:
+            game.menu()
+            game.play()
+            if game.won():
+                game.winner()
+    except KeyboardInterrupt:
+            exit_apps()
 
 
 
