@@ -4,14 +4,10 @@ import board
 import player
 
 class Game:
-    def __init__(self, player_1, player_2, board):
-        self.player_1 = player_1
-        self.player_2 = player_2
+    def __init__(self, board):
+        self.player_1 = None
+        self.player_2 = None
         self.board = board
-        self.won = False
-        self.reset_history()
-        os.set_background("F0")
-        os.start("progress.py")
 
     def write_history(self, player, option):
         with open("progress.txt", "a") as file:
@@ -21,15 +17,25 @@ class Game:
         with open("progress.txt", "w") as file:
             file.write("PROGRESS:\n--------------------\n")
 
+    def won(self):
+        if len(self.board.stacks[26].stack) == 15 or len(self.board.stacks[27].stack) == 15:
+            return True
+        return False
+
     def winner(self):
-        if len(self.board.stacks[26].stack) == 15:
-            winner = self.player_1.name if self.player_1.color == "W" else self.player_2.name
-            self.won = True
-            print(f"\n!!!!! {winner} WON !!!!!\n")
-        elif len(self.board.stacks[27].stack) == 15:
-            winner = self.player_1.name if self.player_1.color == "K" else self.player_2.name
-            self.won = True
-            print(f"\n!!!!! {winner} WON !!!!!\n")
+        off_W = self.board.stacks[26].stack
+        off_K = self.board.stacks[27].stack
+        if self.won():
+            win_off = off_W if len(off_W) == 15 else off_K
+            winner = self.player_1 if win_off[0].color == self.player_1.color else self.player_2
+            loose_off = off_K if len(off_W) == 15 else off_W
+            if loose_off:
+                win_type = "Single win"
+            elif not loose_off:
+                win_type = "Gammon"
+            os.clear()
+            self.board.show(self.player_1, self.player_2)
+            print(f"{winner.name} won -> {win_type}.\n")
 
     def player_round(self, player):
         player.dices.roll()
@@ -58,21 +64,63 @@ class Game:
             roll = player.options[choose-1][2]
             rolls[rolls.index(roll)] = 0
 
+    def choose_num(self, text, options):
+        while True:
+            user_input = input(text)
+            if user_input.isdigit():
+                choose = int(user_input)
+                if 1 <= choose <= len(options):
+                    break
+                else:
+                    print("Wrong option!")
+            else:
+                print("Choose number!")
+        return choose
+
+    def set_player(self, num_of_player):
+        os.clear()
+        print(f"Player num {num_of_player}.\n")
+        p_type_num = self.choose_num(f"Choose player{num_of_player} type (1-human, 2-AI): ", [1, 2])
+        p_type = "human" if p_type_num == 1 else "AI"
+        p_name = input("Choose name: ")
+        if num_of_player == 1:
+            p_color_num = self.choose_num(f"Choose player{num_of_player} color (1-White, 2-Black): ", [1, 2])
+            p_color = "W" if p_color_num == 1 else "K"
+        else:
+            p_color = "W" if self.player_1.color == "K" else "K"
+        new_player = player.Player(p_type, p_name, p_color)
+        return new_player
+    def load(self):
+        pass
+    def new(self):
+        os.set_color("0F")
+        os.clear()
+        self.reset_history()
+        self.board.reset()
+        self.player_1 = self.set_player(1)
+        self.player_2 = self.set_player(2)
+
+    def play(self):
+        os.clear()
+        os.set_color("F0")
+        os.start("progress.py")
+        while True:
+            self.player_round(self.player_1)
+            if game.won():
+                break
+            self.player_round(self.player_2)
+            if game.won():
+                break
 
 
-game = Game(player.Player("AI", "Joe", "W"),
-            player.Player("AI", "Adam", "K"),
-            board.Board())
 
-while True:
-    game.player_round(game.player_1)
+game = Game(board.Board())
+
+game.new()
+game.play()
+if game.won():
     game.winner()
-    if game.won:
-        break
-    game.player_round(game.player_2)
-    game.winner()
-    if game.won:
-        break
+
 
 
 

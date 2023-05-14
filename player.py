@@ -54,7 +54,7 @@ class Player:
                         found = True
                         break
             if not found:
-                choose = random.randint(1, len(options))
+                choose = 1
         else:
             while True:
                 user_input = input(text)

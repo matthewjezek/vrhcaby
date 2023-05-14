@@ -5,7 +5,6 @@ class Board:
     def __init__(self):
         self.stones = self.make_stones()
         self.stacks = self.make_stacks()
-        self.history = []
 
     class Place:
         def __init__(self, stack):
@@ -92,19 +91,24 @@ class Board:
                 place = self.stacks[j].stack
                 if len(place) >= i + 1:
                     layer += (" " + str(place[i]) + " ")
+                elif j in range(11, 0, -2):
+                    layer += " - "
                 else:
                     layer += "   "
             print(f"|{layer}|")
+        print("|                                     |")
         max_num = 5
         for i in range(12, 24):
             if len(self.stacks[i].stack) > max_num:
                 max_num = len(self.stacks[i].stack)
-        for i in range(max_num, -1, -1):
+        for i in range(max_num-1, -1, -1):
             layer = " "
             for j in range(12, 24):
                 place = self.stacks[j].stack
                 if len(place) >= i + 1:
                     layer += (" " + str(place[i]) + " ")
+                elif j in range(13, 24, 2):
+                    layer += " - "
                 else:
                     layer += "   "
             print(f"|{layer}|")
