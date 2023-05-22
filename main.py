@@ -14,7 +14,6 @@ def exit_apps():
         json.dump(data, f)
     os.set_color("0F")
     os.clear()
-    exit()
 
 class Game:
     def __init__(self, board):
@@ -22,25 +21,6 @@ class Game:
         self.player_2 = None
         self.board = board
         self.close = False
-
-    def save_game(self):
-        data = {
-            "board": {
-                "layout": self.board.save_layout()
-            },
-            "player_1": {
-                "name": self.player_1.name,
-                "type": self.player_1.type,
-                "color": self.player_1.color
-            },
-            "player_2": {
-                "name": self.player_2.name,
-                "type": self.player_2.type,
-                "color": self.player_2.color
-            }
-        }
-        with open('save_file.json', 'w') as f:
-            json.dump(data, f)
 
     def write_history(self, player, option):
         with open("progress.txt", "a") as file:
@@ -69,7 +49,7 @@ class Game:
             os.clear()
             self.board.show(self.player_1, self.player_2)
             print(f"{winner.name} won -> {win_type}.\n")
-            input()
+            self.statistics()
 
     def player_round(self, player):
         player.dices.roll()
@@ -125,6 +105,25 @@ class Game:
         new_player = player.Player(p_type, p_name, p_color)
         return new_player
 
+    def save_game(self):
+        data = {
+            "board": {
+                "layout": self.board.save_layout()
+            },
+            "player_1": {
+                "name": self.player_1.name,
+                "type": self.player_1.type,
+                "color": self.player_1.color
+            },
+            "player_2": {
+                "name": self.player_2.name,
+                "type": self.player_2.type,
+                "color": self.player_2.color
+            }
+        }
+        with open('save_file.json', 'w') as f:
+            json.dump(data, f)
+
     def load_game(self):
         os.clear()
         with open('save_file.json', 'r') as f:
@@ -148,43 +147,49 @@ class Game:
         os.start("progress.py")
         while True:
             self.player_round(self.player_1)
-            self.save_game()
             if game.won():
                 break
             self.player_round(self.player_2)
-            self.save_game()
             if game.won():
                 break
-
+            self.save_game()
+        self.winner()
     def statistics(self):
-        pass
+        os.set_color("B0")
+        print("   STATISTICS\n   ------------\n")
+        for stone in self.board.stones["W"]:
+            print("W")
+            print(stone.place_history)
+            print(stone.deaths)
+        for stone in self.board.stones["K"]:
+            print("K")
+            print(stone.place_history)
+            print(stone.deaths)
+        input("PRESS ENTER TO MENU")
 
     def menu(self):
-        os.clear()
-        os.set_color("0F")
-        print(" 1. New Game\n 2. Load\n 3. Exit\n")
-        choose = self.choose_num("Choose option: ", [1, 2, 3])
-        match choose:
-            case 1:
-                self.new_game()
-            case 2:
-                self.load_game()
-            case 3:
+        try:
+            while True:
                 exit_apps()
-
-
-
+                print(" 1. New Game\n 2. Load\n 3. Exit\n")
+                choose = self.choose_num("Choose option: ", [1, 2, 3])
+                match choose:
+                    case 1:
+                        self.new_game()
+                        self.play()
+                    case 2:
+                        self.load_game()
+                        self.play()
+                    case 3:
+                        exit_apps()
+                        exit()
+        except KeyboardInterrupt:
+            self.menu()
 
 if __name__ == '__main__':
-    game = Game(board.Board())
-    try:
-        while True:
-            game.menu()
-            game.play()
-            if game.won():
-                game.winner()
-    except KeyboardInterrupt:
-            exit_apps()
+    board = board.Board()
+    game = Game(board)
+    game.menu()
 
 
 

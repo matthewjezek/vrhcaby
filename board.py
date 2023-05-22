@@ -1,61 +1,66 @@
+import os_comands
 import stone
 from stone import Stone
 
 
 class Board:
     def __init__(self):
-        self.stones = self.make_stones()
-        self.stacks = self.make_stacks(None)
+        self.stones = self.new_stones()
+        self.stacks = self.make_stacks()
 
     class Place:
         def __init__(self, stack):
             self.stack = stack
 
     def reset(self):  # Reset celé desky
-        self.stones = self.make_stones()
-        self.stacks = self.make_stacks(None)
+        self.stones = self.new_stones()
+        self.stacks = self.make_stacks()
 
-    def make_stones(self):  # Vytvoří novou sadu kamenů
+    def new_stones(self):  # Vytvoří novou sadu kamenů
         stones = {
-            "W": [Stone("W"), Stone("W"), Stone("W"), Stone("W"), Stone("W"), Stone("W"), Stone("W"), Stone("W"),
-                  Stone("W"), Stone("W"), Stone("W"), Stone("W"), Stone("W"), Stone("W"), Stone("W")],
-            "K": [Stone("K"), Stone("K"), Stone("K"), Stone("K"), Stone("K"), Stone("K"), Stone("K"), Stone("K"),
-                  Stone("K"), Stone("K"), Stone("K"), Stone("K"), Stone("K"), Stone("K"), Stone("K")]
+            "W": [Stone("W", 0), Stone("W", 0), Stone("W", 11), Stone("W", 11), Stone("W", 11), Stone("W", 11),
+                  Stone("W", 11), Stone("W", 16), Stone("W", 16), Stone("W", 16), Stone("W", 18), Stone("W", 18),
+                  Stone("W", 18), Stone("W", 18), Stone("W", 18)],
+            "K": [Stone("K", 5), Stone("K", 5), Stone("K", 5), Stone("K", 5), Stone("K", 5), Stone("K", 7),
+                  Stone("K", 7), Stone("K", 7), Stone("K", 12), Stone("K", 12), Stone("K", 12), Stone("K", 12),
+                  Stone("K", 12), Stone("K", 23), Stone("K", 23)]
         }
         return stones
 
-    def make_stacks(self, layout_dict):  # Vytvoří novou sadu vrcholů
-        if layout_dict is None:
-            layout_dict = {
-                "W": [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, 0],
-                "K": [0, 0, 0, 0, 0, 5, 0, 3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-                "other_places": [0, 0, 0, 0]
-            }
+    def make_stacks(self):  # Vytvoří novou sadu vrcholů
+        places = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+        stones = self.stones
+        for color in ["W", "K"]:
+            for stone_object in stones[color]:
+                places[stone_object.place_history[-1]].append(stone)
         stacks = []
-        stone_W_i = 0
-        stone_K_i = 0
-        for place_i in range(0, 24):
-            stacks.append(None)
-            num_of_stones = layout_dict["W"][place_i]
-            stack = []
-            for _ in range(0, num_of_stones):
-                stack.append(self.stones["W"][stone_W_i])
-                stone_W_i += 1
-            num_of_stones = layout_dict["K"][place_i]
-            for _ in range(0, num_of_stones):
-                stack.append(self.stones["K"][stone_K_i])
-                stone_K_i += 1
-            stacks[place_i] = self.Place(stack)
-        for place_i in range(24, 28):
-            num_of_stones = layout_dict["other_places"][place_i-24]
-            stack = []
-            for _ in range(0, num_of_stones):
-                if place_i in [24, 26]:
-                    stack.append(stone.Stone("W"))
-                else:
-                    stack.append(stone.Stone("K"))
-            stacks.append(self.Place(stack))
+        for place in places:
+            stacks.append(self.Place(place))
         return stacks
+
+        # stone_W_i = 0
+        # stone_K_i = 0
+        # for place_i in range(0, 24):
+        #     stacks.append(None)
+        #     num_of_stones = layout_dict["W"][place_i]
+        #     stack = []
+        #     for _ in range(0, num_of_stones):
+        #         stack.append(self.stones["W"][stone_W_i])
+        #         stone_W_i += 1
+        #     num_of_stones = layout_dict["K"][place_i]
+        #     for _ in range(0, num_of_stones):
+        #         stack.append(self.stones["K"][stone_K_i])
+        #         stone_K_i += 1
+        #     stacks[place_i] = self.Place(stack)
+        # for place_i in range(24, 28):
+        #     num_of_stones = layout_dict["other_places"][place_i-24]
+        #     stack = []
+        #     for _ in range(0, num_of_stones):
+        #         if place_i in [24, 26]:
+        #             stack.append(stone.Stone("W"))
+        #         else:
+        #             stack.append(stone.Stone("K"))
+        #     stacks.append(self.Place(stack))
 
     def move_stone(self, from_place, to_place, player):  # Pohyb kamene na desce
         stacks = self.stacks
@@ -67,13 +72,25 @@ class Board:
         to_place = 27 if to_place == "OFF" and color == "W" else to_place
         to_place = 28 if to_place == "OFF" and color == "K" else to_place
         stacks[to_place - 1].stack.append(stacks[from_place - 1].stack.pop())
+        self.update_stones()
+
+    def update_stones(self):
+        for place_i in range(0,28):
+            bars_i = [24, 25]
+            place_stack = self.stacks[place_i].stack
+            for stone_object in place_stack:
+                history = stone_object.place_history
+                if history[-1] != place_i:
+                    history.append(place_i)
+                    if place_i in bars_i:
+                        stone_object.deaths += 1
 
     def show(self, player_1, player_2):  # Dynamické vrstvené tištění desky podle obsahu vrcholů
-        print(f"\n{player_1.name if player_1.color == 'W' else player_2.name} BAR: {self.stacks[24].stack}")
-        print("---------------------------------------")
-        print("| 12 11 10  9  8  7  6  5  4  3  2  1 |")
+        print(f"\n {player_1.name if player_1.color == 'W' else player_2.name} BAR: {self.stacks[24].stack}")
+        print(" ---------------------------------------")
+        print(" | 12 11 10  9  8  7  6  5  4  3  2  1 |")
         print(
-            f"|-------------------------------------| {player_1.name if player_1.color == 'K' else player_2.name} END: {self.stacks[27].stack}")
+            f" |-------------------------------------| {player_1.name if player_1.color == 'K' else player_2.name} END: {self.stacks[27].stack}")
         max_num = 5
         for i in range(0, 12):
             if len(self.stacks[i].stack) > max_num:
@@ -88,8 +105,8 @@ class Board:
                     layer += " - "
                 else:
                     layer += "   "
-            print(f"|{layer}|")
-        print("|                                     |")
+            print(f" |{layer}|")
+        print(" |                                     |")
         max_num = 5
         for i in range(12, 24):
             if len(self.stacks[i].stack) > max_num:
@@ -104,12 +121,12 @@ class Board:
                     layer += " - "
                 else:
                     layer += "   "
-            print(f"|{layer}|")
+            print(f" |{layer}|")
         print(
-            f"|-------------------------------------| {player_1.name if player_1.color == 'W' else player_2.name} END: {self.stacks[26].stack}")
-        print("| 13 14 15 16 17 18 19 20 21 22 23 24 |")
-        print("---------------------------------------")
-        print(f"{player_1.name if player_1.color == 'K' else player_2.name} BAR: {self.stacks[25].stack}\n")
+            f" |-------------------------------------| {player_1.name if player_1.color == 'W' else player_2.name} END: {self.stacks[26].stack}")
+        print(" | 13 14 15 16 17 18 19 20 21 22 23 24 |")
+        print(" ---------------------------------------")
+        print(f" {player_1.name if player_1.color == 'K' else player_2.name} BAR: {self.stacks[25].stack}\n")
 
     def check_options(self, player):  # Výpočet možností pro hráče
         options = []
@@ -130,36 +147,37 @@ class Board:
                     options.append(["BAR", place_i + 1, roll, "SAVE"])
                 elif not place or (place and player.color == place[0].color):
                     options.append(["BAR", place_i + 1, roll, "move"])
-        # Kontrola, jestli má hráč všechny kameny na domácí ohradě
-        sum = len(off)
-        for index in home_board:
-            home_place = stacks[index].stack
-            sum += len(home_place) if home_place and home_place[0].color == player.color else 0
-        home_board_check = True if sum == 15 else False
-        # Výpočet indexu umístění nejvzdálenějšího kamene
-        last_stone_i = board[23]
-        for index in reversed(board):
-            place = stacks[index].stack
-            last_stone_i = index if place and place[0].color == player.color else last_stone_i
-        # Generování možností pro pohyb z vrcholů na desce
-        for num in range(1, 25):
-            place_i = board[num - 1]
-            place = stacks[place_i].stack
-            if place and place[0].color == player.color:
-                for roll in rolls:
-                    if num + roll > 24:
-                        if home_board_check and (num + roll == 25 or (num + roll > 25 and place_i == last_stone_i)):
-                            options.append([place_i + 1, "OFF", roll, "END"])
-                    else:
-                        to_place_i = board[num - 1 + roll]
-                        to_place = stacks[to_place_i].stack
-                        if len(to_place) == 1 and player.color != to_place[0].color:
-                            options.append([place_i + 1, to_place_i + 1, roll, "KILL"])
-                        elif (len(to_place) == 1 and player.color == to_place[0].color) \
-                                or (to_place and player.color == to_place[0].color and len(place) == 1):
-                            options.append([place_i + 1, to_place_i + 1, roll, "SAVE"])
-                        elif not to_place or (to_place and to_place[0].color == player.color):
-                            options.append([place_i + 1, to_place_i + 1, roll, "move"])
+        else:
+            # Kontrola, jestli má hráč všechny kameny na domácí ohradě
+            sum = len(off)
+            for index in home_board:
+                home_place = stacks[index].stack
+                sum += len(home_place) if home_place and home_place[0].color == player.color else 0
+            home_board_check = True if sum == 15 else False
+            # Výpočet indexu umístění nejvzdálenějšího kamene
+            last_stone_i = board[23]
+            for index in reversed(board):
+                place = stacks[index].stack
+                last_stone_i = index if place and place[0].color == player.color else last_stone_i
+            # Generování možností pro pohyb z vrcholů na desce
+            for num in range(1, 25):
+                place_i = board[num - 1]
+                place = stacks[place_i].stack
+                if place and place[0].color == player.color:
+                    for roll in rolls:
+                        if num + roll > 24:
+                            if home_board_check and (num + roll == 25 or (num + roll > 25 and place_i == last_stone_i)):
+                                options.append([place_i + 1, "OFF", roll, "END"])
+                        else:
+                            to_place_i = board[num - 1 + roll]
+                            to_place = stacks[to_place_i].stack
+                            if len(to_place) == 1 and player.color != to_place[0].color:
+                                options.append([place_i + 1, to_place_i + 1, roll, "KILL"])
+                            elif (len(to_place) == 1 and player.color == to_place[0].color) \
+                                    or (to_place and player.color == to_place[0].color and len(place) == 1):
+                                options.append([place_i + 1, to_place_i + 1, roll, "SAVE"])
+                            elif not to_place or (to_place and to_place[0].color == player.color):
+                                options.append([place_i + 1, to_place_i + 1, roll, "move"])
         # Odstranění duplicit v options
         final_options = []
         for option in options:
@@ -181,23 +199,23 @@ class Board:
                 num += 1
             print("-----------------------------------------------")
 
-    def save_layout(self):
-        layout = {
-            "W": [],
-            "K": [],
-            "other_places": []
-        }
-        for place_i in range(0, 24):
-            place = self.stacks[place_i].stack
-            if place and place[0].color == "W":
-                layout["W"].append(len(place))
-            else:
-                layout["W"].append(0)
-            if place and place[0].color == "K":
-                layout["K"].append(len(place))
-            else:
-                layout["K"].append(0)
-        for place_i in range(24, 28):
-            layout["other_places"].append(len(self.stacks[place_i].stack))
-        return layout
+    # def save_layout(self):
+    #     layout = {
+    #         "W": [],
+    #         "K": [],
+    #         "other_places": []
+    #     }
+    #     for place_i in range(0, 24):
+    #         place = self.stacks[place_i].stack
+    #         if place and place[0].color == "W":
+    #             layout["W"].append(len(place))
+    #         else:
+    #             layout["W"].append(0)
+    #         if place and place[0].color == "K":
+    #             layout["K"].append(len(place))
+    #         else:
+    #             layout["K"].append(0)
+    #     for place_i in range(24, 28):
+    #         layout["other_places"].append(len(self.stacks[place_i].stack))
+    #     return layout
 

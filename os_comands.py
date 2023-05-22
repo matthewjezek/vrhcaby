@@ -23,4 +23,4 @@ def set_color(color):
 def kill_window():
     if name == 'nt':
         system('title kill_window')
-        system(f'taskkill /f /fi "WINDOWTITLE eq kill_window"')
+        system('taskkill /f /fi "WINDOWTITLE eq kill_window"')
