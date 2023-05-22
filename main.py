@@ -4,6 +4,7 @@ import board
 import player
 import json
 
+
 def exit_apps():
     with open('exit.json', 'w') as f:
         data = True
@@ -14,6 +15,7 @@ def exit_apps():
         json.dump(data, f)
     os.set_color("0F")
     os.clear()
+
 
 class Game:
     def __init__(self, board):
@@ -106,9 +108,11 @@ class Game:
         return new_player
 
     def save_game(self):
+        stones = self.board.stones
         data = {
-            "board": {
-                "layout": self.board.save_layout()
+            "stacks": {
+                "W": [],
+                "K": []
             },
             "player_1": {
                 "name": self.player_1.name,
@@ -121,6 +125,9 @@ class Game:
                 "color": self.player_2.color
             }
         }
+        for color in ["W", "K"]:
+            for stone_object in stones[color]:
+                data["stacks"][color].append(stone_object.place_history[-1])
         with open('save_file.json', 'w') as f:
             json.dump(data, f)
 
@@ -129,8 +136,8 @@ class Game:
         with open('save_file.json', 'r') as f:
             data = json.load(f)
         os.set_color("0F")
+        self.board.load_stones(data["stacks"])
         self.reset_history()
-        self.board.stacks = self.board.make_stacks(data["board"]["layout"])
         self.player_1 = player.Player(data["player_1"]["type"], data["player_1"]["name"], data["player_1"]["color"])
         self.player_2 = player.Player(data["player_2"]["type"], data["player_2"]["name"], data["player_2"]["color"])
 
@@ -154,6 +161,7 @@ class Game:
                 break
             self.save_game()
         self.winner()
+
     def statistics(self):
         os.set_color("B0")
         print("   STATISTICS\n   ------------\n")
@@ -185,6 +193,7 @@ class Game:
                         exit()
         except KeyboardInterrupt:
             self.menu()
+
 
 if __name__ == '__main__':
     board = board.Board()

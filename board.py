@@ -27,40 +27,27 @@ class Board:
         }
         return stones
 
+    def load_stones(self, stones):
+        objects = {
+            "W": [],
+            "K": []
+        }
+        for color in ["W", "K"]:
+            for stone_place in stones[color]:
+                objects[color].append(stone.Stone(color, stone_place))
+        self.stones = objects
+
     def make_stacks(self):  # Vytvoří novou sadu vrcholů
-        places = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+        places = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],
+                  [], [], [], []]
         stones = self.stones
         for color in ["W", "K"]:
             for stone_object in stones[color]:
-                places[stone_object.place_history[-1]].append(stone)
+                places[stone_object.place_history[-1]].append(stone_object)
         stacks = []
         for place in places:
             stacks.append(self.Place(place))
         return stacks
-
-        # stone_W_i = 0
-        # stone_K_i = 0
-        # for place_i in range(0, 24):
-        #     stacks.append(None)
-        #     num_of_stones = layout_dict["W"][place_i]
-        #     stack = []
-        #     for _ in range(0, num_of_stones):
-        #         stack.append(self.stones["W"][stone_W_i])
-        #         stone_W_i += 1
-        #     num_of_stones = layout_dict["K"][place_i]
-        #     for _ in range(0, num_of_stones):
-        #         stack.append(self.stones["K"][stone_K_i])
-        #         stone_K_i += 1
-        #     stacks[place_i] = self.Place(stack)
-        # for place_i in range(24, 28):
-        #     num_of_stones = layout_dict["other_places"][place_i-24]
-        #     stack = []
-        #     for _ in range(0, num_of_stones):
-        #         if place_i in [24, 26]:
-        #             stack.append(stone.Stone("W"))
-        #         else:
-        #             stack.append(stone.Stone("K"))
-        #     stacks.append(self.Place(stack))
 
     def move_stone(self, from_place, to_place, player):  # Pohyb kamene na desce
         stacks = self.stacks
@@ -198,24 +185,4 @@ class Board:
                 print(f"{num}:   {option[0]} -> {option[1]}, [{option[2]}], {option[3]}")
                 num += 1
             print("-----------------------------------------------")
-
-    # def save_layout(self):
-    #     layout = {
-    #         "W": [],
-    #         "K": [],
-    #         "other_places": []
-    #     }
-    #     for place_i in range(0, 24):
-    #         place = self.stacks[place_i].stack
-    #         if place and place[0].color == "W":
-    #             layout["W"].append(len(place))
-    #         else:
-    #             layout["W"].append(0)
-    #         if place and place[0].color == "K":
-    #             layout["K"].append(len(place))
-    #         else:
-    #             layout["K"].append(0)
-    #     for place_i in range(24, 28):
-    #         layout["other_places"].append(len(self.stacks[place_i].stack))
-    #     return layout
 

@@ -4,6 +4,7 @@ import json
 import colorama
 from colorama import Fore, Back, Style
 
+
 def show_data():
     with open('progress.txt', 'r') as file:
         colorama.init()
@@ -32,6 +33,7 @@ def check_change():
             exit_app = json.load(f)
         if exit_app:
             os.kill_window()
+
 
 exit_app = False
 check_change()
