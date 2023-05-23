@@ -20,8 +20,7 @@ def set_color(line, move_type):
 
 def show_data():
     print("PROGRESS:\n---------------------\n")
-    with open('progress.json', 'r') as file:
-        data = json.load(file)
+    data = read_progress()
     for index in range(0, len(data)):
         line = data[index]
         player_name = line[0]
@@ -33,34 +32,33 @@ def show_data():
 
 
 def show_last_line():
-    with open('progress.json', 'r') as file:
-        data = json.load(file)
-        line = data[-1]
-        player_name = line[0]
-        option = line[1]
-        line = "\n" if len(data) > 1 and player_name != data[-2][0] else ""
-        line += f"{player_name}: {option[0]} -> {option[1]}, [{option[2]}] - {option[3]}"
-        line = set_color(line, option[3])
-        print(line)
+    data = read_progress()
+    line = data[-1]
+    player_name = line[0]
+    option = line[1]
+    line = "\n" if len(data) > 1 and player_name != data[-2][0] else ""
+    line += f"{player_name}: {option[0]} -> {option[1]}, [{option[2]}] - {option[3]}"
+    line = set_color(line, option[3])
+    print(line)
 
 
 def check_exit():
-    with open('exit.json', 'r') as f:
-        status = json.load(f)
+    with open('exit.json', 'r') as file:
+        status = json.load(file)
     return True if status else False
 
 
-def check_change():
+def read_progress():
     with open("progress.json", "r") as file:
-        data_1 = json.load(file)
-        sleep(1)
-    with open("progress.json", "r") as file:
-        data_2 = json.load(file)
-    return True if data_1 != data_2 else False
+        read = json.load(file)
+    return read
 
 
 show_data()
+progress = read_progress()
 while not check_exit():
-    if check_change():
+    sleep(1)
+    if progress != read_progress():
         show_last_line()
+        progress = read_progress()
 os.kill_window()

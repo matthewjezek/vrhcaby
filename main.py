@@ -105,12 +105,12 @@ class Game:
 
     def set_player(self, num_of_player):
         os.clear()
-        print(f"Player num {num_of_player}.\n")
-        p_type_num = choose_num(f"Choose player{num_of_player} type (1-human, 2-AI): ", [1, 2])
+        print(f"Player number {num_of_player}.\n")
+        p_type_num = choose_num(f"Choose player {num_of_player} type (1-human, 2-AI): ", [1, 2])
         p_type = "human" if p_type_num == 1 else "AI"
         p_name = input("Choose name: ")
         if num_of_player == 1:
-            p_color_num = choose_num(f"Choose player{num_of_player} color (1-White, 2-Black): ", [1, 2])
+            p_color_num = choose_num(f"Choose player {num_of_player} color (1-White, 2-Black): ", [1, 2])
             p_color = "W" if p_color_num == 1 else "K"
         else:
             p_color = "W" if self.player_1.color == "K" else "K"
@@ -119,7 +119,10 @@ class Game:
 
     def save_game(self):
         stones = self.board.stones
+        with open("progress.json", "r") as file:
+            progress = json.load(file)
         data = {
+            "progress": progress,
             "stones": {
                 "W": [],
                 "K": []
@@ -138,14 +141,17 @@ class Game:
         for color in ["W", "K"]:
             for stone_object in stones[color]:
                 data["stones"][color].append([stone_object.place_history, stone_object.deaths])
-        with open('save_file.json', 'w') as f:
-            json.dump(data, f)
+        with open('save_file.json', 'w') as file:
+            json.dump(data, file)
 
     def load_game(self):
         os.clear()
-        with open('save_file.json', 'r') as f:
-            data = json.load(f)
         os.set_color("0F")
+        with open('save_file.json', 'r') as file:
+            data = json.load(file)
+        progress = data["progress"]
+        with open('progress.json', 'w') as file:
+            json.dump(progress, file)
         self.board.stones = bd.load_stone_objects(data["stones"])
         self.board.stacks = self.board.make_stacks()
         self.player_1 = pl.Player(data["player_1"]["type"], data["player_1"]["name"], data["player_1"]["color"])
@@ -174,13 +180,16 @@ class Game:
         print("    STATISTICS\n   ------------")
         for player in [self.player_1, self.player_2]:
             player_deaths = 0
+            killed_stones = 0
             player_averages = []
             for stone in self.board.stones[player.color]:
                 stone_moves = len(stone.place_history) - 1
+                killed_stones += 1 if stone.deaths > 0 else 0
                 player_deaths += stone.deaths
                 player_averages.append(stone_moves / (stone.deaths + 1))
             print(f" {player.name} ({player.color}):\n"
                   f"   Deaths: {player_deaths}\n"
+                  f"   Killed stones: {killed_stones}\n"
                   f"   Average move lifetime : {int(sum(player_averages)/len(player_averages))}\n"
                   )
         input("\nPRESS ENTER TO MENU")
@@ -189,7 +198,7 @@ class Game:
         try:
             while True:
                 exit_apps()
-                print("\n 1. New Game\n 2. Load\n 3. Exit\n")
+                print("\n 1. New Game\n 2. Load Game\n 3. Exit\n")
                 choose = choose_num("Choose option: ", [1, 2, 3])
                 match choose:
                     case 1:
