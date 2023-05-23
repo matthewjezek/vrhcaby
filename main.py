@@ -17,6 +17,20 @@ def exit_apps():
     os.clear()
 
 
+def write_progress(player, option):
+    with open("progress.json", "r") as file:
+        data = json.load(file)
+    data.append([player.name, option])
+    with open("progress.json", "w") as file:
+        # file.write(str(f"{player.name}: {option[0]} -> {option[1]}, [{option[2]}] - {option[3]}\n"))
+        json.dump(data, file)
+
+
+def reset_progress():
+    with open("progress.json", "w") as file:
+        json.dump([], file)
+
+
 def choose_num(text, options):
     while True:
         user_input = input(text)
@@ -29,16 +43,6 @@ def choose_num(text, options):
         else:
             print("Choose number!")
     return choose
-
-
-def write_progress(player, option):
-    with open("progress.txt", "a") as file:
-        file.write(str(f"{player.name}: {option[0]} -> {option[1]}, [{option[2]}] - {option[3]}\n"))
-
-
-def reset_progress():
-    with open("progress.txt", "w") as file:
-        file.write("PROGRESS:\n--------------------\n")
 
 
 class Game:
@@ -160,13 +164,14 @@ class Game:
         os.start("progress.py")
         while not game.won():
             self.player_round(self.player_1)
-            self.player_round(self.player_2)
+            if not game.won():
+                self.player_round(self.player_2)
             self.save_game()
         self.winner()
 
     def statistics(self):
         os.set_color("B0")
-        print("   STATISTICS\n   ------------\n")
+        print("    STATISTICS\n   ------------\n")
         for stone in self.board.stones["W"]:
             print("W")
             print(stone.place_history)

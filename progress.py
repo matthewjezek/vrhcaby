@@ -1,39 +1,66 @@
 from time import sleep
 import os_comands as os
 import json
-import colorama
-from colorama import Fore, Back, Style
+import colorama as cl
+
+
+def set_color(line, move_type):
+    cl.init()
+    match move_type:
+        case "KILL":
+            line = cl.Fore.LIGHTRED_EX + line
+        case "SAVE":
+            line = cl.Fore.GREEN + line
+        case "END":
+            line = cl.Fore.YELLOW + line
+        case "move":
+            line = cl.Fore.WHITE + line
+    return line
 
 
 def show_data():
-    with open('progress.txt', 'r') as file:
-        colorama.init()
-        lines = file.readlines()
-        if "KILL" in lines[-1]:
-            print(Fore.LIGHTRED_EX + lines[-1])
-        elif "SAVE" in lines[-1]:
-            print(Fore.GREEN + lines[-1])
-        elif "END" in lines[-1]:
-            print(Fore.YELLOW + lines[-1])
-        elif "move" in lines[-1]:
-            print(Fore.WHITE + lines[-1])
+    print("PROGRESS:\n---------------------\n")
+    with open('progress.json', 'r') as file:
+        data = json.load(file)
+    for index in range(0, len(data)):
+        line = data[index]
+        player_name = line[0]
+        option = line[1]
+        line = "\n" if index > 0 and data[index - 1][0] != player_name else ""
+        line += f"{player_name}: {option[0]} -> {option[1]}, [{option[2]}] - {option[3]}"
+        line = set_color(line, option[3])
+        print(line)
+
+
+def show_last_line():
+    with open('progress.json', 'r') as file:
+        data = json.load(file)
+        line = data[-1]
+        player_name = line[0]
+        option = line[1]
+        line = "\n" if len(data) > 1 and player_name != data[-2][0] else ""
+        line += f"{player_name}: {option[0]} -> {option[1]}, [{option[2]}] - {option[3]}"
+        line = set_color(line, option[3])
+        print(line)
+
+
+def check_exit():
+    with open('exit.json', 'r') as f:
+        status = json.load(f)
+    return True if status else False
 
 
 def check_change():
-    print("PROGRESS:\n---------------------\n")
-    while True:
-        with open("progress.txt", "r") as file:
-            data_1 = file.read()
-            sleep(0.1)
-        with open("progress.txt", "r") as file:
-            data_2 = file.read()
-        if data_1 != data_2:
-            show_data()
-        with open('exit.json', 'r') as f:
-            exit_app = json.load(f)
-        if exit_app:
-            os.kill_window()
+    with open("progress.json", "r") as file:
+        data_1 = json.load(file)
+        sleep(1)
+    with open("progress.json", "r") as file:
+        data_2 = json.load(file)
+    return True if data_1 != data_2 else False
 
 
-exit_app = False
-check_change()
+show_data()
+while not check_exit():
+    if check_change():
+        show_last_line()
+os.kill_window()
