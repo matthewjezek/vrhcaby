@@ -63,11 +63,14 @@ class Game:
         if self.won():
             win_off = off_w if len(off_w) == 15 else off_k
             winner = self.player_1 if win_off[0].color == self.player_1.color else self.player_2
-            loose_off = off_k if len(off_w) == 15 else off_w
-            if loose_off:
+            loser = self.player_1 if winner == self.player_2 else self.player_2
+            lose_off = off_k if len(off_w) == 15 else off_w
+            if lose_off:
                 win_type = "Single win"
-            elif not loose_off:
-                win_type = "Gammon"
+            elif not lose_off and self.board.check_home_board(loser):
+                win_type = "Gammon!"
+            else:
+                win_type = "Backgammon!!"
             os.clear()
             self.board.show(self.player_1, self.player_2)
             print(f"{winner.name} won -> {win_type}.\n")

@@ -116,13 +116,21 @@ class Board:
         print(" ---------------------------------------")
         print(f" {player_1.name if player_1.color == 'K' else player_2.name} BAR: {self.stacks[25].stack}\n")
 
+    def check_home_board(self, player):
+        stacks = self.stacks
+        home_board = range(18, 24) if player.color == "W" else range(0, 6)
+        off = stacks[26].stack if player.color == "W" else stacks[27].stack
+        suma = len(off)
+        for index in home_board:
+            home_place = stacks[index].stack
+            suma += len(home_place) if home_place and home_place[0].color == player.color else 0
+        return True if suma == 15 else False
+
     def check_options(self, player):  # Výpočet možností pro hráče
         options = []
         stacks = self.stacks
         rolls = [roll for roll in player.dices.rolls if roll != 0]
         bar = stacks[24].stack if player.color == "W" else stacks[25].stack
-        off = stacks[26].stack if player.color == "W" else stacks[27].stack
-        home_board = range(18, 24) if player.color == "W" else range(0, 6)
         board = range(0, 24) if player.color == "W" else range(23, -1, -1)
         # Generování možností pro vracení kamenů hráče z baru
         if bar:
@@ -137,11 +145,7 @@ class Board:
                     options.append(["BAR", place_i + 1, roll, "move"])
         else:
             # Kontrola, jestli má hráč všechny kameny na domácí ohradě
-            suma = len(off)
-            for index in home_board:
-                home_place = stacks[index].stack
-                suma += len(home_place) if home_place and home_place[0].color == player.color else 0
-            home_board_check = True if suma == 15 else False
+            home_board_check = self.check_home_board(player)
             # Výpočet indexu umístění nejvzdálenějšího kamene
             last_stone_i = board[23]
             for index in reversed(board):
