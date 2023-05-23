@@ -1,6 +1,7 @@
 import random
 from time import sleep
 
+
 class Player:
     def __init__(self, player_type, player_name, player_color):
         self.name = player_name

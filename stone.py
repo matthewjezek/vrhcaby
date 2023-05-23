@@ -1,8 +1,8 @@
 class Stone:
-    def __init__(self, color, place):
+    def __init__(self, color, place_history, deaths):
         self.color = color
-        self.deaths = 0
-        self.place_history = [place]
+        self.deaths = deaths
+        self.place_history = place_history
 
     def __repr__(self):
         if self.color == "W":

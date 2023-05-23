@@ -1,7 +1,7 @@
 from time import sleep
 import os_comands as os
-import board
-import player
+import board as bd
+import player as pl
 import json
 
 
@@ -17,20 +17,35 @@ def exit_apps():
     os.clear()
 
 
+def choose_num(text, options):
+    while True:
+        user_input = input(text)
+        if user_input.isdigit():
+            choose = int(user_input)
+            if 1 <= choose <= len(options):
+                break
+            else:
+                print("Wrong option!")
+        else:
+            print("Choose number!")
+    return choose
+
+
+def write_progress(player, option):
+    with open("progress.txt", "a") as file:
+        file.write(str(f"{player.name}: {option[0]} -> {option[1]}, [{option[2]}] - {option[3]}\n"))
+
+
+def reset_progress():
+    with open("progress.txt", "w") as file:
+        file.write("PROGRESS:\n--------------------\n")
+
+
 class Game:
-    def __init__(self, board):
+    def __init__(self, game_board):
         self.player_1 = None
         self.player_2 = None
-        self.board = board
-        self.close = False
-
-    def write_history(self, player, option):
-        with open("progress.txt", "a") as file:
-            file.write(str(f"{player.name}: {option[0]} -> {option[1]}, [{option[2]}] - {option[3]}\n"))
-
-    def reset_history(self):
-        with open("progress.txt", "w") as file:
-            file.write("PROGRESS:\n--------------------\n")
+        self.board = game_board
 
     def won(self):
         if len(self.board.stacks[26].stack) == 15 or len(self.board.stacks[27].stack) == 15:
@@ -38,12 +53,13 @@ class Game:
         return False
 
     def winner(self):
-        off_W = self.board.stacks[26].stack
-        off_K = self.board.stacks[27].stack
+        off_w = self.board.stacks[26].stack
+        off_k = self.board.stacks[27].stack
+        win_type = None
         if self.won():
-            win_off = off_W if len(off_W) == 15 else off_K
+            win_off = off_w if len(off_w) == 15 else off_k
             winner = self.player_1 if win_off[0].color == self.player_1.color else self.player_2
-            loose_off = off_K if len(off_W) == 15 else off_W
+            loose_off = off_k if len(off_w) == 15 else off_w
             if loose_off:
                 win_type = "Single win"
             elif not loose_off:
@@ -56,11 +72,12 @@ class Game:
     def player_round(self, player):
         player.dices.roll()
         while True:
-            if max(player.dices.rolls) == 0: break
+            if max(player.dices.rolls) == 0:
+                break
             os.clear()
             print(f"TURN FOR {player.name}.")
             self.board.show(self.player_1, self.player_2)
-            sleep(1)
+            sleep(0.5)
             player.dices.show()
             self.board.print_options(player)
             if len(player.options) > 0:
@@ -73,44 +90,33 @@ class Game:
             sleep(1) if player.type == "AI" else sleep(1)
             move_type = player.options[choose - 1][3]
             if move_type == "KILL":
-                self.board.move_stone(player.options[choose-1][1], "BAR", self.player_2 if player == self.player_1 else self.player_1)
-            self.board.move_stone(player.options[choose-1][0], player.options[choose-1][1], player)
-            self.write_history(player, player.options[choose-1])
+                self.board.move_stone(player.options[choose - 1][1], "BAR",
+                                      self.player_2 if player == self.player_1 else
+                                      self.player_1)
+            self.board.move_stone(player.options[choose - 1][0], player.options[choose - 1][1], player)
+            write_progress(player, player.options[choose - 1])
             rolls = player.dices.rolls
-            roll = player.options[choose-1][2]
+            roll = player.options[choose - 1][2]
             rolls[rolls.index(roll)] = 0
-
-    def choose_num(self, text, options):
-        while True:
-            user_input = input(text)
-            if user_input.isdigit():
-                choose = int(user_input)
-                if 1 <= choose <= len(options):
-                    break
-                else:
-                    print("Wrong option!")
-            else:
-                print("Choose number!")
-        return choose
 
     def set_player(self, num_of_player):
         os.clear()
         print(f"Player num {num_of_player}.\n")
-        p_type_num = self.choose_num(f"Choose player{num_of_player} type (1-human, 2-AI): ", [1, 2])
+        p_type_num = choose_num(f"Choose player{num_of_player} type (1-human, 2-AI): ", [1, 2])
         p_type = "human" if p_type_num == 1 else "AI"
         p_name = input("Choose name: ")
         if num_of_player == 1:
-            p_color_num = self.choose_num(f"Choose player{num_of_player} color (1-White, 2-Black): ", [1, 2])
+            p_color_num = choose_num(f"Choose player{num_of_player} color (1-White, 2-Black): ", [1, 2])
             p_color = "W" if p_color_num == 1 else "K"
         else:
             p_color = "W" if self.player_1.color == "K" else "K"
-        new_player = player.Player(p_type, p_name, p_color)
+        new_player = pl.Player(p_type, p_name, p_color)
         return new_player
 
     def save_game(self):
         stones = self.board.stones
         data = {
-            "stacks": {
+            "stones": {
                 "W": [],
                 "K": []
             },
@@ -127,7 +133,7 @@ class Game:
         }
         for color in ["W", "K"]:
             for stone_object in stones[color]:
-                data["stacks"][color].append(stone_object.place_history[-1])
+                data["stones"][color].append([stone_object.place_history, stone_object.deaths])
         with open('save_file.json', 'w') as f:
             json.dump(data, f)
 
@@ -136,14 +142,14 @@ class Game:
         with open('save_file.json', 'r') as f:
             data = json.load(f)
         os.set_color("0F")
-        self.board.load_stones(data["stacks"])
-        self.reset_history()
-        self.player_1 = player.Player(data["player_1"]["type"], data["player_1"]["name"], data["player_1"]["color"])
-        self.player_2 = player.Player(data["player_2"]["type"], data["player_2"]["name"], data["player_2"]["color"])
+        self.board.stones = bd.load_stone_objects(data["stones"])
+        self.board.stacks = self.board.make_stacks()
+        self.player_1 = pl.Player(data["player_1"]["type"], data["player_1"]["name"], data["player_1"]["color"])
+        self.player_2 = pl.Player(data["player_2"]["type"], data["player_2"]["name"], data["player_2"]["color"])
 
     def new_game(self):
         os.clear()
-        self.reset_history()
+        reset_progress()
         self.board.reset()
         self.player_1 = self.set_player(1)
         self.player_2 = self.set_player(2)
@@ -152,13 +158,9 @@ class Game:
         os.clear()
         os.set_color("F0")
         os.start("progress.py")
-        while True:
+        while not game.won():
             self.player_round(self.player_1)
-            if game.won():
-                break
             self.player_round(self.player_2)
-            if game.won():
-                break
             self.save_game()
         self.winner()
 
@@ -175,12 +177,12 @@ class Game:
             print(stone.deaths)
         input("PRESS ENTER TO MENU")
 
-    def menu(self):
+    def start(self):
         try:
             while True:
                 exit_apps()
                 print(" 1. New Game\n 2. Load\n 3. Exit\n")
-                choose = self.choose_num("Choose option: ", [1, 2, 3])
+                choose = choose_num("Choose option: ", [1, 2, 3])
                 match choose:
                     case 1:
                         self.new_game()
@@ -192,13 +194,10 @@ class Game:
                         exit_apps()
                         exit()
         except KeyboardInterrupt:
-            self.menu()
+            self.start()
 
 
 if __name__ == '__main__':
-    board = board.Board()
+    board = bd.Board()
     game = Game(board)
-    game.menu()
-
-
-
+    game.start()
