@@ -171,22 +171,25 @@ class Game:
 
     def statistics(self):
         os.set_color("B0")
-        print("    STATISTICS\n   ------------\n")
-        for stone in self.board.stones["W"]:
-            print("W")
-            print(stone.place_history)
-            print(stone.deaths)
-        for stone in self.board.stones["K"]:
-            print("K")
-            print(stone.place_history)
-            print(stone.deaths)
-        input("PRESS ENTER TO MENU")
+        print("    STATISTICS\n   ------------")
+        for player in [self.player_1, self.player_2]:
+            player_deaths = 0
+            player_averages = []
+            for stone in self.board.stones[player.color]:
+                stone_moves = len(stone.place_history) - 1
+                player_deaths += stone.deaths
+                player_averages.append(stone_moves / (stone.deaths + 1))
+            print(f" {player.name} ({player.color}):\n"
+                  f"   Deaths: {player_deaths}\n"
+                  f"   Average move lifetime : {int(sum(player_averages)/len(player_averages))}\n"
+                  )
+        input("\nPRESS ENTER TO MENU")
 
     def start(self):
         try:
             while True:
                 exit_apps()
-                print(" 1. New Game\n 2. Load\n 3. Exit\n")
+                print("\n 1. New Game\n 2. Load\n 3. Exit\n")
                 choose = choose_num("Choose option: ", [1, 2, 3])
                 match choose:
                     case 1:
