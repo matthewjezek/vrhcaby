@@ -24,6 +24,14 @@ def new_stones():  # Vytvoří novou sadu kamenů
     return stones
 
 
+def delete_duplicate_options(options):
+    final_options = []
+    for option in options:
+        if option not in final_options:
+            final_options.append(option)
+    return final_options
+
+
 class Board:
     def __init__(self):
         self.stones = new_stones()
@@ -98,7 +106,7 @@ class Board:
         for i in range(12, 24):
             if len(self.stacks[i].stack) > max_num:
                 max_num = len(self.stacks[i].stack)
-        for i in range(max_num-1, -1, -1):
+        for i in range(max_num - 1, -1, -1):
             layer = " "
             for j in range(12, 24):
                 place = self.stacks[j].stack
@@ -116,7 +124,7 @@ class Board:
         print(" ---------------------------------------")
         print(f" {player_1.name if player_1.color == 'K' else player_2.name} BAR: {self.stacks[25].stack}\n")
 
-    def check_home_board(self, player):
+    def check_home_board(self, player):  # Kontrola, jestli má hráč všechny kameny na domácí ohradě
         stacks = self.stacks
         home_board = range(18, 24) if player.color == "W" else range(0, 6)
         off = stacks[26].stack if player.color == "W" else stacks[27].stack
@@ -125,6 +133,14 @@ class Board:
             home_place = stacks[index].stack
             suma += len(home_place) if home_place and home_place[0].color == player.color else 0
         return True if suma == 15 else False
+
+    def last_stone_index(self, player):  # Výpočet indexu umístění nejvzdálenějšího kamene hráče
+        board = range(0, 24) if player.color == "W" else range(23, -1, -1)
+        last_stone_i = board[23]
+        for index in reversed(board):
+            place = self.stacks[index].stack
+            last_stone_i = index if place and place[0].color == player.color else last_stone_i
+        return last_stone_i
 
     def check_options(self, player):  # Výpočet možností pro hráče
         options = []
@@ -144,14 +160,9 @@ class Board:
                 elif not place or (place and player.color == place[0].color):
                     options.append(["BAR", place_i + 1, roll, "move"])
         else:
-            # Kontrola, jestli má hráč všechny kameny na domácí ohradě
-            home_board_check = self.check_home_board(player)
-            # Výpočet indexu umístění nejvzdálenějšího kamene
-            last_stone_i = board[23]
-            for index in reversed(board):
-                place = stacks[index].stack
-                last_stone_i = index if place and place[0].color == player.color else last_stone_i
             # Generování možností pro pohyb z vrcholů na desce
+            home_board_check = self.check_home_board(player)
+            last_stone_i = self.last_stone_index(player)
             for num in range(1, 25):
                 place_i = board[num - 1]
                 place = stacks[place_i].stack
@@ -171,10 +182,7 @@ class Board:
                             elif not to_place or (to_place and to_place[0].color == player.color):
                                 options.append([place_i + 1, to_place_i + 1, roll, "move"])
         # Odstranění duplicit v options
-        final_options = []
-        for option in options:
-            if option not in final_options:
-                final_options.append(option)
+        final_options = delete_duplicate_options(options)
         player.options = final_options
         return final_options
 
